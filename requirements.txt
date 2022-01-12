@@ -1,0 +1,3 @@
+python-dotenv
+sh
+superpathlib @ git+https://github.com/quintenroets/superpathlib
