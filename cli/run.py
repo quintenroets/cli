@@ -57,7 +57,7 @@ def _run(*args, root=False, wait=True, console=False, text=True, check=True, she
     shell = shell or (any([shell_token in args[0] for shell_token in "|;$"]) and not console)  # don't use on untrusted input
     args = list(args) if shell or console else parse_args(args)
     
-    if root and os.name == "posix":
+    if (root or 'sudo' in args) and os.name == "posix":
         args.insert(0, "sudo")
             
         if "SUDO_ASKPASS" not in os.environ:
