@@ -12,12 +12,11 @@ from .errorhandler import ErrorHandler as errorhandler
 def urlopen(*urls):
     urls = parse_iterable(urls)
     
-    if os.name == 'nt':
-        for url in urls:
+    for url in urls:
+        if os.name == 'nt':
             os.startfile(url)
-    else:
-        for url in urls:
-            start(f'xdg-open "{url}"')
+        else:
+            start(('xdg-open', url))
 
 
 def start(*commands, **kwargs):
@@ -30,8 +29,11 @@ def get(*commands, **kwargs):
 
 
 def run(*commands, **kwargs):
-    commands = parse_iterable(commands)
-    
+    """
+    command can be:
+        - command string
+        - iterable of iterables of command parts
+    """
     if 'capture_output' in kwargs:
         res = "".join([_run(command, **kwargs).stdout.strip() for command in commands])
     else:
@@ -54,9 +56,9 @@ def run(*commands, **kwargs):
     return res
 
 
-def _run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, **kwargs):
-    shell = shell or (any([shell_token in args[0] for shell_token in "|;$"]) and not console)  # don't use on untrusted input
-    args = list(args) if shell or console else parse_args(args)
+def _run(args, root=False, wait=True, console=False, text=True, check=True, shell=False, **kwargs):
+    shell = shell or (any([shell_token in args for shell_token in "*|;$"]) and not console)  # don't use on untrusted input
+    args = [args] if shell or console else parse_args(args)
     
     if (root or 'sudo' in args) and os.name == "posix":
         args.insert(0, "sudo")
@@ -98,19 +100,27 @@ def parse_iterable(values):
 
 
 def parse_args(args):
-    if len(args) == 1 and isinstance(args[0], str):
-        args = shlex.split(args[0])
-    
-    parsed = []
-    for arg in args:
-        if isinstance(arg, dict):
-            parsed += [f"--{k}", v]
-        elif isinstance(arg, list):
-            parsed += arg
-        elif isinstance(arg, types.GeneratorType):
-            parsed += list(arg)
-        else:
-            parsed.append(arg)
+    """
+    args can be:
+        - command string
+        - iterable of iterables of command parts
+    """
+    if isinstance(args, str):
+        parsed = shlex.split(args)
+    else:
+        parsed = []
+        for arg in args:
+            if isinstance(arg, str):
+                parsed += shlex.split(arg)
+            elif isinstance(arg, dict):
+                parsed += [f"--{k}", v]
+            elif isinstance(arg, list):
+                parsed += arg
+            elif isinstance(arg, types.GeneratorType):
+                parsed += list(arg)
+            else:
+                # item with str method e.g. Path 
+                parsed.append(str(arg))
             
     return parsed
 
