@@ -16,7 +16,7 @@ def urlopen(*urls):
         if os.name == 'nt':
             os.startfile(url)
         else:
-            start(('xdg-open', url))
+            start(f'xdg-open "{url}"')
 
 
 def start(*commands, **kwargs):
