@@ -35,6 +35,7 @@ def run(*commands, **kwargs):
     if 'capture_output' in kwargs:
         res = "".join([_run(command, **kwargs).stdout.strip() for command in commands])
     else:
+        res = None  # sometimes no commands
         for command in commands:
             res = _run(command, **kwargs)
             
