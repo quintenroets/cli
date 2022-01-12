@@ -68,6 +68,7 @@ def _run(*args, root=False, wait=True, console=False, text=True, check=True, she
             args.insert(1, "-A")
             
     if console:
+        wait = False  # avoid focussing console after process finished
         args = ["konsole", "--new-tab", "-e", os.environ["SHELL"], "-c"] + args
         if "DISPLAY" not in os.environ:
             os.environ["DISPLAY"] = ":0.0" # needed for non-login scripts to be able to activate console
