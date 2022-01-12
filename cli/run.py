@@ -58,7 +58,7 @@ def run(*commands, **kwargs):
 
 def _run(args, root=False, wait=True, console=False, text=True, check=True, shell=False, **kwargs):
     shell = shell or (any([shell_token in args for shell_token in "*|;$"]) and not console)  # don't use on untrusted input
-    args = [args] if shell or console else parse_args(args)
+    args = [args] if shell else parse_args(args, console)
     
     if (root or 'sudo' in args) and os.name == "posix":
         args.insert(0, "sudo")
@@ -99,7 +99,7 @@ def parse_iterable(values):
     return values
 
 
-def parse_args(args):
+def parse_args(args, console=False):
     """
     args can be:
         - command string
@@ -121,6 +121,9 @@ def parse_args(args):
             else:
                 # item with str method e.g. Path 
                 parsed.append(str(arg))
+    
+    if console:  # literal string needed
+        parsed = [" ".join(parsed)]
             
     return parsed
 
