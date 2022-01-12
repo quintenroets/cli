@@ -1,5 +1,6 @@
 import itertools
 import os
+import sys
 import threading
 import time
 
@@ -15,8 +16,7 @@ class Message:
     
     def show(self, message):
         message = message.strip()
-        l = self.message_length
-        print(f"{UP * l}{CLR_N * l}{UP * l}{message.replace(NEWLINE, CLR_N)}{CLR_N}", end="")
+        print(f'{self.header}{message.replace(NEWLINE, CLR_N)}{CLR_N}', end="")
         self._message = message
         
     @property
@@ -26,6 +26,15 @@ class Message:
             ((len(line) - 1) // width) + 1 for line in self._message.split("\n")
             ]) if self._message else 0
         return length
+    
+    @property
+    def header(self):
+        if sys.stdout.isatty():
+            l = self.message_length
+            header = f'{UP * l}{CLR_N * l}{UP * l}'
+        else:
+            header = ''
+        return header
         
     @property
     def message(self):
@@ -42,8 +51,7 @@ class Message:
         return self
     
     def __exit__(self, *_):
-        l = self.message_length
-        print(UP * l + CLR_N * l + UP * l, end="")
+        print(self.header, end="")
 
 
 class Spinner(Message):
@@ -53,7 +61,8 @@ class Spinner(Message):
         self.tail = None
         
     def __enter__(self):
-        threading.Thread(target=self.update).start()
+        if sys.stdout.isatty():
+            threading.Thread(target=self.update).start()
         return super().__enter__()
         
     def show(self, message):
