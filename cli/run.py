@@ -39,7 +39,7 @@ def run(*commands, **kwargs):
         for command in commands:
             res = _run(command, **kwargs)
             
-    if kwargs.get("console") and commands:
+    if kwargs.get("console") and list(commands):
         # only activate console if console kwargs True and if commands have effectively run
         
         console = "konsole"
