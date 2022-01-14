@@ -16,7 +16,7 @@ class Message:
     
     def show(self, message):
         message = message.strip()
-        print(f'{self.header}{message.replace(NEWLINE, CLR_N)}{CLR_N}', end="")
+        sys.stdout.write(f'{self.header}{message.replace(NEWLINE, CLR_N)}{CLR_N}')
         self._message = message
         
     @property
@@ -42,7 +42,8 @@ class Message:
     
     @message.setter
     def message(self, message):
-        self.show(message)
+        if message is not None:
+            self.show(message)
 
     def __enter__(self):
         message = self._message
