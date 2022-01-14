@@ -8,9 +8,13 @@ import types
 from .errorhandler import ErrorHandler as errorhandler
 
 
-def shell(*commands, **kwargs):
-    for command in commands:
-        run(command, shell=True, **kwargs)
+def sh(*cmds, **kwargs):
+    return commands(*cmds, shell=True, **kwargs)
+
+
+def commands(*cmds, **kwargs):
+    for cmd in cmds:
+        run(cmd, **kwargs)
 
 
 def urlopen(*urls):    
