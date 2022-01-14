@@ -11,9 +11,9 @@ class ErrorHandler():
     def __exit__(self, type, value, tb):
         if tb:
             if type != KeyboardInterrupt and not ErrorHandler.error:
-                self.show_error(exit=self.exit)
+                error = self.show_error(exit=self.exit)
             if self.obj is not None:
-                self.obj.crashed = str(tb)
+                self.obj.crashed = error
         
         return True
 
