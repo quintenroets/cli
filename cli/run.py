@@ -37,7 +37,7 @@ def lines(*args, **kwargs):
 
 def get(*args, **kwargs):
     kwargs['capture_output'] = True
-    return run(*args, **kwargs).stdout
+    return run(*args, **kwargs).stdout.strip()
 
 
 def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, **kwargs):
