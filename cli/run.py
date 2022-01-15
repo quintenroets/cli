@@ -48,7 +48,7 @@ def run(*args, root=False, wait=True, console=False, text=True, check=True, shel
     """
     args = parse_args(args)
     if shell or console:
-        args = [" ".join([str(a) for a in args])] 
+        args = [shlex.join([str(a) for a in args])] 
         
     if os.name == 'posix':
         if root:
@@ -106,8 +106,8 @@ def parse_args(args):
         elif isinstance(arg, types.GeneratorType):
             parsed += list(arg)
         else:
-            # item with str method e.g. Path 
-            parsed.append(arg)
+            # item with str method e.g. Path or int
+            parsed.append(str(arg))
             
     return parsed
 
