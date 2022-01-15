@@ -12,7 +12,7 @@ def sh(*cmds, **kwargs):
     return commands(*cmds, shell=True, **kwargs)
 
 
-def commands(*cmds, **kwargs):
+def run_commands(*cmds, **kwargs):
     for cmd in cmds:
         run(cmd, **kwargs)
 
