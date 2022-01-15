@@ -91,8 +91,9 @@ def parse_args(args):
     """
     
     parsed = []
-    for arg in args:
-        if isinstance(arg, str):
+    for i, arg in enumerate(args):
+        if i == 0 and isinstance(arg, str):
+            # allow first argument in the form of a command
             parsed += shlex.split(arg)
         elif isinstance(arg, dict):
             for k, v in arg.items():
