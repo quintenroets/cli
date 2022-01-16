@@ -1,3 +1,4 @@
 python-dotenv
+rich
 sh
 superpathlib @ git+https://github.com/quintenroets/superpathlib

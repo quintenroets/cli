@@ -113,7 +113,7 @@ def iterate_args(args):
         elif isinstance(arg, set):
             for part in arg:
                 yield f'--{part}'
-        elif isinstance(arg, list) or isinstance(arg, types.GeneratorType):
+        elif isinstance(arg, list) or isinstance(arg, tuple) or isinstance(arg, types.GeneratorType):
             yield from arg
         else:  # item with str method e.g. Path or int
             yield arg

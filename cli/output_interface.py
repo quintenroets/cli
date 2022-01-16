@@ -4,6 +4,10 @@ import sys
 import threading
 import time
 
+from rich.console import Console
+
+console = Console()
+
 UP = '\x1B[1A'
 CLR = '\x1B[0K'
 NEWLINE = '\n'
@@ -54,33 +58,5 @@ class Message:
     def __exit__(self, *_):
         print(self.header, end='')
 
-
-class Spinner(Message):
-    def __init__(self, message):
-        super().__init__(message)
-        self.quit = False
-        self.tail = None
-        
-    def __enter__(self):
-        if sys.stdout.isatty():
-            threading.Thread(target=self.update).start()
-        return super().__enter__()
-        
-    def show(self, message):
-        super().show(message)
-        self.tail = self.message.split('\n')[-1]
-        
-    def update(self):
-        signs = itertools.cycle('/-\|')
-        for sign in signs:
-            if self.quit:
-                break
-            
-            if self.tail:
-                print(f'{UP}{self.tail}.. {sign}{CLR_N}', end='')
-            time.sleep(0.08)
-            
-    def __exit__(self, *_):
-        self.quit = True
-        super().__exit__(*_)
+Spinner = console.status
         
