@@ -27,7 +27,7 @@ class ErrorHandler():
         from plib import Path
         
         ErrorHandler.error = True
-        path = Path.assets / ".error.txt"
+        path = Path.assets / '.error.txt'
         path.text = message or traceback.format_exc()
         
         notify_process = cli.start(f'cat {path}; read', console=True)

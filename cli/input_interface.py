@@ -1,10 +1,10 @@
 def ask(question, **custom_choice_mappers):
     choice_mappers = {
-        True: ["", "yes", "y"],
-        False: ["no", "n"]
+        True: ['', 'yes', 'y'],
+        False: ['no', 'n']
     }
     choice_mappers.update(custom_choice_mappers or {})
-    print(question + " [Y/n] ", end="")
+    print(question + ' [Y/n] ', end='')
     
     choice = input().lower().strip()
     for mapping, answers in choice_mappers.items():

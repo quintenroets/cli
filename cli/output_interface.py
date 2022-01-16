@@ -4,10 +4,10 @@ import sys
 import threading
 import time
 
-UP = "\x1B[1A"
-CLR = "\x1B[0K"
-NEWLINE = "\n"
-CLR_N = f"{CLR}{NEWLINE}"
+UP = '\x1B[1A'
+CLR = '\x1B[0K'
+NEWLINE = '\n'
+CLR_N = f'{CLR}{NEWLINE}'
 
 
 class Message:
@@ -23,7 +23,7 @@ class Message:
     def message_length(self):
         width = os.get_terminal_size().columns
         length = sum([
-            ((len(line) - 1) // width) + 1 for line in self._message.split("\n")
+            ((len(line) - 1) // width) + 1 for line in self._message.split('\n')
             ]) if self._message else 0
         return length
     
@@ -52,7 +52,7 @@ class Message:
         return self
     
     def __exit__(self, *_):
-        print(self.header, end="")
+        print(self.header, end='')
 
 
 class Spinner(Message):
@@ -68,7 +68,7 @@ class Spinner(Message):
         
     def show(self, message):
         super().show(message)
-        self.tail = self.message.split("\n")[-1]
+        self.tail = self.message.split('\n')[-1]
         
     def update(self):
         signs = itertools.cycle('/-\|')
@@ -77,7 +77,7 @@ class Spinner(Message):
                 break
             
             if self.tail:
-                print(f'{UP}{self.tail}.. {sign}{CLR_N}', end="")
+                print(f'{UP}{self.tail}.. {sign}{CLR_N}', end='')
             time.sleep(0.08)
             
     def __exit__(self, *_):

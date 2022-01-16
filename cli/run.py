@@ -102,6 +102,9 @@ def parse_args(args):
                     parsed.append(v)
         elif isinstance(arg, list):
             parsed += arg
+        elif isinstance(arg, set):
+            for k in arg:
+                parsed.append(f'--{k}')
         elif isinstance(arg, types.GeneratorType):
             parsed += list(arg)
         else:
