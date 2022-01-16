@@ -41,11 +41,11 @@ def get(*args, **kwargs):
 
 
 def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, **kwargs):
-    """
+    '''
     arg can be:
         - string
         - iterable of command parts (only allowed if not shell and not console)
-    """
+    '''
     args = list(args) if shell or console else parse_args(args)
         
     if os.name == 'posix':
@@ -84,11 +84,11 @@ def run(*args, root=False, wait=True, console=False, text=True, check=True, shel
 
 
 def parse_args(args):
-    """
+    '''
     arg can be:
         - command string
         - iterable of command parts
-    """
+    '''
     
     parsed = []
     for i, arg in enumerate(args):
@@ -117,5 +117,5 @@ def main():
         run(command, console=True)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
