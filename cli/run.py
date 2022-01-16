@@ -41,25 +41,10 @@ def get(*args, **kwargs):
 
 
 def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, **kwargs):
-    '''
-    arg can be:
-        - string
-        - iterable of command parts (only allowed if not shell and not console)
-    '''
-    args = list(args) if shell or console else parse_args(args)
-        
-    if os.name == 'posix':
-        if root:
-            args.insert(0, 'sudo')
-        if 'sudo' in args:
-            
-            if 'SUDO_ASKPASS' not in os.environ:
-                from . import env  # lazy import
-                env.load()
-            if 'SUDO_ASKPASS' in os.environ:
-                args.insert(args.index('sudo') + 1, '-A')
+    args = prepare_args(args, command=shell or console, root=root)
             
     if console:
+        run('wmctrl -a Konsole', check=False)
         wait = False  # avoid blocking if console not opened yet
         args = ['konsole', '--new-tab', '-e', os.environ['SHELL'], '-c', *args]
         if 'DISPLAY' not in os.environ:
@@ -76,42 +61,62 @@ def run(*args, root=False, wait=True, console=False, text=True, check=True, shel
         )
     except subprocess.CalledProcessError as e:
         raise Exception(e.stderr or e)  # more verbose errors
-    
-    if console:
-        run('wmctrl -a Konsole', check=False)
-            
+                
     return res
 
 
-def parse_args(args):
+def prepare_args(args, command=False, root=False):
+    if not command:
+        args = iterate_args(args)
+        
+    args = [str(arg) for arg in args]
+    
+    if os.name == 'posix':
+        root_kw = 'sudo'
+        if root_kw in args[0]:
+            root = True
+    
+        if root:
+            if 'SUDO_ASKPASS' not in os.environ:
+                from . import env  # lazy import
+                env.load()
+                
+            if command:
+                arg = args[0]
+                if root_kw not in arg:
+                    arg = root_kw + ' ' + arg
+                args = [arg.replace(root_kw, root_kw + ' -A')]
+            else:
+                if args[0] != root_kw:
+                    args.insert(0, root_kw)
+                args.insert(1, '-A')
+    
+    return args
+
+
+def iterate_args(args):
     '''
     arg can be:
         - command string
         - iterable of command parts
     '''
     
-    parsed = []
     for i, arg in enumerate(args):
         if i == 0 and isinstance(arg, str):
             # allow first argument in the form of a command
-            parsed += shlex.split(arg)
+            yield from shlex.split(arg)
         elif isinstance(arg, dict):
             for k, v in arg.items():
-                parsed.append(f'--{k}')
-                if v not in [None, True]:
-                    parsed.append(v)
-        elif isinstance(arg, list):
-            parsed += arg
+                yield f'--{k}'
+                if v is not None:
+                    yield v
         elif isinstance(arg, set):
-            for k in arg:
-                parsed.append(f'--{k}')
-        elif isinstance(arg, types.GeneratorType):
-            parsed += list(arg)
-        else:
-            # item with str method e.g. Path or int
-            parsed.append(str(arg))
-            
-    return parsed
+            for part in arg:
+                yield f'--{part}'
+        elif isinstance(arg, list) or isinstance(arg, types.GeneratorType):
+            yield from arg
+        else:  # item with str method e.g. Path or int
+            yield arg
 
 
 def main():
