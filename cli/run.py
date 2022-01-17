@@ -38,7 +38,10 @@ def get(*args, **kwargs):
     return run(*args, **kwargs).stdout.strip()
 
 
-def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, **kwargs):
+def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, tty=False, **kwargs):
+    """
+    tty: also works for special outputs that clear the output and move the cursor
+    """
     args = prepare_args(args, command=shell or console, root=root)
             
     if console:
@@ -52,11 +55,19 @@ def run(*args, root=False, wait=True, console=False, text=True, check=True, shel
         kwargs['stdout'] = kwargs['stderr'] = subprocess.DEVNULL
     
     try:
-        res = (
-            subprocess.run(args, text=text, check=check, shell=shell, **kwargs)
-            if wait else
-            subprocess.Popen(args, shell=shell, **kwargs)
-        )
+        if tty:
+            import pexpect
+            pexpect_kwargs = {}
+            if not kwargs.get('capture_output'):
+                pexpect_kwargs['log_file'] = sys.stdout
+            task = pexpect.spawn(args[0], [*args[1:]], encoding='utf-8', timeout=None, **pexpect_kwargs)
+            res = task.read()                
+        else:
+            res = (
+                subprocess.run(args, text=text, check=check, shell=shell, **kwargs)
+                if wait else
+                subprocess.Popen(args, shell=shell, **kwargs)
+            )
     except subprocess.CalledProcessError as e:
         raise Exception(e.stderr or e)  # more verbose errors
                 
