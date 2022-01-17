@@ -6,5 +6,3 @@ from .run import get, lines, run, run_commands, sh, start, urlopen
 from rich.console import Console
 
 console = Console()
-
-status = console.status
