@@ -56,7 +56,4 @@ class Message:
         return self
     
     def __exit__(self, *_):
-        print(self.header, end='')
-
-Spinner = console.status
-        
+        print(self.header, end='')        
