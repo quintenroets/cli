@@ -35,7 +35,10 @@ def lines(*args, **kwargs):
 
 def get(*args, **kwargs):
     kwargs['capture_output'] = True
-    return run(*args, **kwargs).stdout.strip()
+    output = run(*args, **kwargs)
+    if not kwargs.get('tty'):
+        output = output.stdout
+    return output.strip()
 
 
 def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, tty=False, **kwargs):
@@ -59,7 +62,7 @@ def run(*args, root=False, wait=True, console=False, text=True, check=True, shel
             import pexpect
             pexpect_kwargs = {}
             if not kwargs.get('capture_output'):
-                pexpect_kwargs['log_file'] = sys.stdout
+                pexpect_kwargs['logfile'] = sys.stdout
             task = pexpect.spawn(args[0], [*args[1:]], encoding='utf-8', timeout=None, **pexpect_kwargs)
             res = task.read()                
         else:
