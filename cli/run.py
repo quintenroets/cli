@@ -5,8 +5,6 @@ import sys
 import time
 import types
 
-from .errorhandler import ErrorHandler as errorhandler
-
 
 def sh(*cmds, **kwargs):
     return commands(*cmds, shell=True, **kwargs)
@@ -120,9 +118,8 @@ def iterate_args(args):
 
 
 def main():
-    with errorhandler():
-        command = ' '.join(sys.argv[1:])
-        run(command, console=True)
+    command = ' '.join(sys.argv[1:])
+    run(command, console=True)
 
 
 if __name__ == '__main__':
