@@ -4,7 +4,7 @@ def ask(question, addition=' [Y/n]', **choice_mappers):
         False: ['no', 'n']
     } | (choice_mappers or {})
     
-    print(question + default, end=' ')
+    print(question + addition, end=' ')
     
     choice = input().lower().strip()
     for mapping, answers in choice_mappers.items():
