@@ -41,7 +41,7 @@ def get(*args, **kwargs):
     return output.strip()
 
 
-def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, tty=False, **kwargs):
+def run(*args, root=False, wait=True, console=False, text=True, check=True, shell=False, capture_output_tty=False, **kwargs):
     """
     tty: also works for special outputs that clear the output and move the cursor
     """
@@ -58,13 +58,17 @@ def run(*args, root=False, wait=True, console=False, text=True, check=True, shel
         kwargs['stdout'] = kwargs['stderr'] = subprocess.DEVNULL
     
     try:
-        if tty:
+        if capture_output_tty:
             import pexpect
-            pexpect_kwargs = {}
-            if not kwargs.get('capture_output'):
-                pexpect_kwargs['logfile'] = sys.stdout
-            task = pexpect.spawn(args[0], [*args[1:]], encoding='utf-8', timeout=None, **pexpect_kwargs)
-            res = task.read()                
+            import tempfile
+            with tempfile.TemporaryFile() as tmp:
+                child = pexpect.spawn(args[0], [*args[1:]], timeout=None, logfile=tmp)
+                if 'capture_output' in kwargs:
+                    child.expect(pexpect.EOF)
+                else:
+                    child.interact()
+                tmp.seek(0)
+                res = tmp.read().decode()
         else:
             res = (
                 subprocess.run(args, text=text, check=check, shell=shell, **kwargs)

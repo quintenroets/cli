@@ -1,7 +1,7 @@
 import readline  # correctly handle arrow keys when asking user input
 import rich
 
-from .input_interface import ask, prompt
+from .input_interface import ask, prompt, confirm
 from .install import install, get_install_command
 from .output_interface import Message as message
 from .progress import progress
