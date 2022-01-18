@@ -13,6 +13,7 @@ def ask(question, addition=' [Y/n]', **choice_mappers):
     
     return choice
 
+
 def prompt(*args, **kwargs):
     from rich.prompt import Prompt
     return Prompt.ask(*args, **kwargs)
