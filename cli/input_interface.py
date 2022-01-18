@@ -1,4 +1,4 @@
-def ask(question, addition=' [Y/n]', **choice_mappers):
+def ask(question, addition=' [Y/n]', **choice_mappers):    
     choice_mappers = {
         True: ['', 'yes', 'y'],
         False: ['no', 'n']
@@ -12,3 +12,7 @@ def ask(question, addition=' [Y/n]', **choice_mappers):
             choice = mapping
     
     return choice
+
+def prompt(*args, **kwargs):
+    from rich.prompt import Prompt
+    return Prompt.ask(*args, **kwargs)

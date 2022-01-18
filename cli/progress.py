@@ -1,15 +1,7 @@
-from rich.progress import *
+def progress(sequence, description=None, total=None, unit='it', description_width=None):
+    from rich.progress import TextColumn, BarColumn, TimeRemainingColumn, Progress  # lazy imports
 
-    
-def progress(
-    sequence: Union[Sequence[ProgressType], Iterable[ProgressType]],
-    description: str = None,
-    total: Optional[int] = None,
-    unit = 'it',
-    description_width=None
-) -> Iterable[ProgressType]:
-
-    columns: List["ProgressColumn"] = (
+    columns = (
         [TextColumn("[progress.description]{task.description}")] if description else []
     )
     columns.extend(

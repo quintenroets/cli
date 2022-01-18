@@ -4,10 +4,6 @@ import sys
 import threading
 import time
 
-from rich.console import Console
-
-console = Console()
-
 UP = '\x1B[1A'
 CLR = '\x1B[0K'
 NEWLINE = '\n'

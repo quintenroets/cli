@@ -2,7 +2,6 @@ from .run import get, run
 
 
 def install(*packages, installer_command=None):
-    # lazy imports
     import platform
     import warnings
     
