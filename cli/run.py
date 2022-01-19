@@ -15,7 +15,7 @@ def run_commands(*cmds, **kwargs):
         run(cmd, **kwargs)
 
 
-def urlopen(*urls):    
+def urlopen(*urls):
     for url in urls:
         if os.name == 'nt':
             os.startfile(url)
