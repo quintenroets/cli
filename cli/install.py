@@ -1,11 +1,9 @@
-from .run import get, run
+import cli
 
 
 def install(*packages, installer_command=None):
     import platform
     import warnings
-    
-    packages = parse_args(packages)
     
     if platform.system() == 'Linux':
         command = installer_command or get_install_command()
