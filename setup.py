@@ -1,26 +1,28 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
-NAME = 'cli'
+NAME = "cli"
+
 
 def read(filename):
     try:
         with open(filename) as fp:
-            content = fp.read().split('\n')
+            content = fp.read().split("\n")
     except FileNotFoundError:
         content = []
     return content
 
 
 setup(
-    author='Quinten Roets',
-    author_email='quinten.roets@gmail.com',
-    description='extended subprocess',
+    author="Quinten Roets",
+    author_email="quinten.roets@gmail.com",
+    description="extended subprocess",
     name=NAME,
-    version='1.0',
+    version="1.0",
     packages=find_packages(),
-    install_requires=read('requirements.txt'),
+    install_requires=read("requirements.txt"),
     entry_points={
-        'console_scripts': [
-            'konsolerun = cli.run:main',
-        ]},
+        "console_scripts": [
+            "konsolerun = cli.run:main",
+        ]
+    },
 )
