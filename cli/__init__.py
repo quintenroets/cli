@@ -7,6 +7,7 @@ from .install import get_install_command, install
 from .output_interface import Message as message
 from .progress import progress
 from .run import get, lines, run, run_commands, sh, start, urlopen
+from .status import status
 
 
 class Proxy:

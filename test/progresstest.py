@@ -17,5 +17,16 @@ def test_progress_double():
                 time.sleep(0.1)
 
 
+def test_progress_with_status():
+    for i in cli.progress(range(10), "advance"):
+        time.sleep(0.1)
+        with cli.status("waiting"):
+            time.sleep(0.1)
+
+    with cli.status("waiting"):
+        time.sleep(5)
+
+
 test_progress()
 test_progress_double()
+test_progress_with_status()
