@@ -1,26 +1,33 @@
-def progress(sequence, description=None, total=None, unit="it", description_width=None):
-    from rich.progress import (
-        TextColumn,
-        BarColumn,
-        TimeRemainingColumn,
-        Progress,
-    )  # lazy imports
+def get_progress():
+    from rich.progress import TextColumn  # lazy imports
+    from rich.progress import BarColumn, Progress, TimeRemainingColumn
 
-    columns = (
-        [TextColumn("[progress.description]{task.description}")] if description else []
-    )
+    columns = [TextColumn("[progress.description]{task.description}")]
     columns.extend(
         (
             TextColumn(
-                "[progress.completed]{task.completed}/[progress.total]{task.total:>0.0f} "
-                + unit
+                "[progress.completed]{task.completed}/[progress.total]{task.total:>0.0f} {task.fields[unit]}"
             ),
             BarColumn(bar_width=1000),  # shrinks depending on other columns
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             TimeRemainingColumn(),
         )
     )
-    progress = Progress(*columns)
+    return Progress(*columns)
 
-    with progress:
-        yield from progress.track(sequence, total=total, description=description)
+
+class ProgressManager:
+    _prog = None
+
+    @classmethod
+    @property
+    def prog(cls):
+        if cls._prog is None:
+            cls._prog = get_progress()
+        return cls._prog
+
+
+def progress(sequence, description="", unit="it", total=None):
+    ProgressManager.prog.__enter__()
+    task_id = ProgressManager.prog.add_task(description=description, unit=unit)
+    yield from ProgressManager.prog.track(sequence, total, task_id, description)
