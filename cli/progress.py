@@ -1,3 +1,6 @@
+import sys
+
+
 def get_progress():
     from rich.progress import TextColumn  # lazy imports
     from rich.progress import BarColumn, Progress, TimeRemainingColumn
@@ -29,6 +32,11 @@ class ProgressManager:
 
 
 def progress(sequence, description="", unit="it", total=None):
+    version = float(".".join(sys.version.split()[0].split(".")[:2]))
+    if version < 3.9:
+        # classmethod properties require python 3.9
+        return sequence
+
     ProgressManager.prog.__enter__()
     task_id = ProgressManager.prog.add_task(description=description, unit=unit)
     ProgressManager.busy_ids.append(task_id)
