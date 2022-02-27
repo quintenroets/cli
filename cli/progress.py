@@ -33,14 +33,13 @@ class ProgressManager:
 
 def progress(sequence, description="", unit="it", total=None):
     version = float(".".join(sys.version.split()[0].split(".")[:2]))
-    if version < 3.9:
-        # classmethod properties require python 3.9
-        return sequence
+    # classmethod properties require python 3.9
+    prog = ProgressManager.prog() if version < 3.9 else ProgressManager.prog
+    prog.__enter__()
 
-    ProgressManager.prog.__enter__()
-    task_id = ProgressManager.prog.add_task(description=description, unit=unit)
+    task_id = prog.add_task(description=description, unit=unit)
     ProgressManager.busy_ids.append(task_id)
-    yield from ProgressManager.prog.track(sequence, total, task_id, description)
+    yield from prog.track(sequence, total, task_id, description)
     ProgressManager.busy_ids.remove(task_id)
     if not ProgressManager.busy_ids:
-        ProgressManager.prog.__exit__(None, None, None)
+        prog.__exit__(None, None, None)
