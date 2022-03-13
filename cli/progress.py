@@ -21,7 +21,7 @@ def get_progress():
 
 class ProgressManager:
     _prog = None
-    busy_ids = []
+    busy_amount = 0
 
     @classmethod
     @property
@@ -38,8 +38,8 @@ def progress(sequence, description="", unit="it", total=None):
     prog.__enter__()
 
     task_id = prog.add_task(description=description, unit=unit)
-    ProgressManager.busy_ids.append(task_id)
+    ProgressManager.busy_amount += 1
     yield from prog.track(sequence, total, task_id, description)
-    ProgressManager.busy_ids.remove(task_id)
-    if not ProgressManager.busy_ids:
+    ProgressManager.busy_amount -= 1
+    if ProgressManager.busy_amount == 0:
         prog.__exit__(None, None, None)
