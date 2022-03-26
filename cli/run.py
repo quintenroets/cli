@@ -127,6 +127,7 @@ def prepare_args(args, command=False, root=False):
 
 
 def auto_pw() -> bool:
+    return False
     return "SUDO_ASKPASS" in os.environ
 
 
