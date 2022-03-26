@@ -106,7 +106,7 @@ def prepare_args(args, command=False, root=False):
             root = True
 
         if root:
-            if "SUDO_ASKPASS" not in os.environ:
+            if not auto_pw():
                 from . import env  # lazy import
 
                 env.load()
@@ -115,13 +115,19 @@ def prepare_args(args, command=False, root=False):
                 arg = args[0]
                 if root_kw not in arg:
                     arg = root_kw + " " + arg
-                args = [arg.replace(root_kw, root_kw + " -A")]
+                if auto_pw():
+                    args = [arg.replace(root_kw, root_kw + " -A")]
             else:
                 if args[0] != root_kw:
                     args.insert(0, root_kw)
-                args.insert(1, "-A")
+                if auto_pw():
+                    args.insert(1, "-A")
 
     return args
+
+
+def auto_pw() -> bool:
+    return "SUDO_ASKPASS" in os.environ
 
 
 def iterate_args(args):
