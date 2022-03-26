@@ -7,7 +7,7 @@ import types
 
 
 def sh(*cmds, **kwargs):
-    return commands(*cmds, shell=True, **kwargs)
+    return run_commands(*cmds, shell=True, **kwargs)
 
 
 def run_commands(*cmds, **kwargs):
