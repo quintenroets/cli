@@ -32,9 +32,9 @@ class ProgressManager:
 
 
 def progress(sequence, description="", unit="it", total=None):
-    version = float(".".join(sys.version.split()[0].split(".")[:2]))
+    version = sys.version.split()[0].split(".")[:2]
     # classmethod properties require python 3.9
-    prog = ProgressManager.prog() if version < 3.9 else ProgressManager.prog
+    prog = ProgressManager.prog() if version < (3, 9) else ProgressManager.prog
     prog.__enter__()
 
     task_id = prog.add_task(description=description, unit=unit)
