@@ -41,6 +41,14 @@ def get(*args, **kwargs):
     return output.strip()
 
 
+def check_succes(*args):
+    return return_code(*args) == 0
+
+
+def return_code(*args):
+    return run(*args, check=False, capture_output=True).returncode
+
+
 def run(
     *args,
     root=False,

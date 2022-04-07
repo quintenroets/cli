@@ -6,7 +6,17 @@ from .input_interface import ask, confirm, prompt
 from .install import get_install_command, install
 from .output_interface import Message as message
 from .progress import ProgressManager, progress
-from .run import get, lines, run, run_commands, sh, start, urlopen
+from .run import (
+    check_succes,
+    get,
+    lines,
+    return_code,
+    run,
+    run_commands,
+    sh,
+    start,
+    urlopen,
+)
 from .status import status
 
 
