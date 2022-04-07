@@ -4,6 +4,7 @@ import subprocess
 import sys
 import time
 import types
+from typing import List, Union
 
 
 def sh(*cmds, **kwargs):
@@ -27,13 +28,13 @@ def start(*args, **kwargs):
     return run(*args, wait=False, **kwargs)
 
 
-def lines(*args, **kwargs):
+def lines(*args, **kwargs) -> List[str]:
     lines = get(*args, **kwargs).split("\n")
     lines = [l for l in lines if l]
     return lines
 
 
-def get(*args, **kwargs):
+def get(*args, **kwargs) -> str:
     kwargs["capture_output"] = True
     output = run(*args, **kwargs)
     if not kwargs.get("tty"):
@@ -41,11 +42,11 @@ def get(*args, **kwargs):
     return output.strip()
 
 
-def check_succes(*args):
+def check_succes(*args) -> bool:
     return return_code(*args) == 0
 
 
-def return_code(*args):
+def return_code(*args) -> int:
     return run(*args, check=False, capture_output=True).returncode
 
 
@@ -59,7 +60,7 @@ def run(
     shell=False,
     capture_output_tty=False,
     **kwargs,
-):
+) -> Union[str, subprocess.CompletedProcess]:
     """
     tty: also works for special outputs that clear the output and move the cursor
     """
