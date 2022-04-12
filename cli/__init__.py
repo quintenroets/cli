@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import readline  # correctly handle arrow keys when asking user input
+from typing import TYPE_CHECKING
 
 import rich
 
@@ -19,6 +22,9 @@ from .run import (
 )
 from .status import status
 
+if TYPE_CHECKING:
+    from rich.console import Console
+
 
 class Proxy:
     def __init__(self, handler):
@@ -28,4 +34,4 @@ class Proxy:
         return self.__handler().__getattribute__(name)
 
 
-console = Proxy(rich.get_console)  # increase startup performance
+console: Console = Proxy(rich.get_console)  # increase startup performance
