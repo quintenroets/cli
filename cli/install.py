@@ -1,3 +1,5 @@
+import shlex
+
 import cli
 
 
@@ -8,7 +10,8 @@ def install(*packages, installer_command=None):
     if platform.system() == "Linux":
         command = installer_command or get_install_command()
         for p in packages:
-            cli.run(command, p, root=True, check=False)
+            args = shlex.split(p)
+            cli.run(command, *args, root=True, check=False)
     else:
         message = f"Required packages cannot be installed automatically because OS is not Linux"
         warnings.warn(message)
