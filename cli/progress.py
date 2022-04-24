@@ -2,8 +2,9 @@ import sys
 
 
 def get_progress():
-    from rich.progress import TextColumn  # lazy imports
-    from rich.progress import BarColumn, Progress, TimeRemainingColumn
+    from rich.progress import TextColumn  # noqa: autoimport
+    from rich.progress import (BarColumn, Progress,  # noqa: autoimport
+                               TimeRemainingColumn)
 
     columns = [TextColumn("[progress.description]{task.description}")]
     columns.extend(
@@ -41,4 +42,4 @@ def progress(sequence, description="", unit="it", total=None):
     yield from prog.track(sequence, total, task_id, description)
     ProgressManager.busy_amount -= 1
     if ProgressManager.busy_amount == 0:
-        prog.__exit__(None, None, None)
+        pass  # prog.__exit__(None, None, None)  # disable for now to fix issue of progress appearing twice

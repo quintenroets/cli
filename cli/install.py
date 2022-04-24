@@ -4,8 +4,8 @@ import cli
 
 
 def install(*packages, installer_command=None):
-    import platform
-    import warnings
+    import platform  # noqa: autoimport
+    import warnings  # noqa: autoimport
 
     if platform.system() == "Linux":
         command = installer_command or get_install_command()

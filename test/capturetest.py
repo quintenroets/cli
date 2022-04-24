@@ -1,4 +1,4 @@
 import cli
 
-out = cli.run('ls', capture=True)
+out = cli.run("ls", capture=True)
 print(out)

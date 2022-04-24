@@ -2,7 +2,6 @@ import os
 import shlex
 import subprocess
 import sys
-import time
 import types
 from typing import List, Union
 
@@ -80,8 +79,9 @@ def run(
 
     try:
         if capture_output_tty:
-            import pexpect
-            import tempfile
+            import tempfile  # noqa: autoimport
+
+            import pexpect  # noqa: autoimport
 
             with tempfile.TemporaryFile() as tmp:
                 child = pexpect.spawn(args[0], [*args[1:]], timeout=None, logfile=tmp)
@@ -116,7 +116,7 @@ def prepare_args(args, command=False, root=False):
 
         if root:
             if not auto_pw():
-                from . import env  # lazy import
+                from . import env  # noqa: autoimport
 
                 env.load()
 

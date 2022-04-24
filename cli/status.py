@@ -1,6 +1,10 @@
+
+
+
 def status(*args, **kwargs):
-    import cli
-    import contextlib
+    import contextlib  # noqa: autoimport
+
+    import cli  # noqa: autoimport
 
     try:
         get_ipython()
