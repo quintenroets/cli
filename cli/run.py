@@ -58,6 +58,7 @@ def run(
     check=True,
     shell=False,
     capture_output_tty=False,
+    title=None,
     **kwargs,
 ) -> Union[str, subprocess.CompletedProcess]:
     """
@@ -68,6 +69,8 @@ def run(
     if console:
         run("wmctrl -a Konsole", check=False)
         wait = False  # avoid blocking if console not opened yet
+        if title is not None:
+            args = (f'echo -ne "\\033]30;{title}\\007"; ' + args[0],)
         args = ["konsole", "--new-tab", "-e", os.environ["SHELL"], "-c", *args]
         if "DISPLAY" not in os.environ:
             os.environ[
