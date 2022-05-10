@@ -72,10 +72,10 @@ def run(
         if title is not None:
             args = (f'echo -ne "\\033]30;{title}\\007"; ' + args[0],)
         args = ["konsole", "--new-tab", "-e", os.environ["SHELL"], "-c", *args]
+
+        # needed for non-login scripts to be able to activate console
         if "DISPLAY" not in os.environ:
-            os.environ[
-                "DISPLAY"
-            ] = ":0.0"  # needed for non-login scripts to be able to activate console
+            os.environ["DISPLAY"] = ":0.0"
 
     if not wait:
         kwargs["stdout"] = kwargs["stderr"] = subprocess.DEVNULL
@@ -107,10 +107,10 @@ def run(
 
 
 def prepare_args(args, command=False, root=False):
-    if not command:
-        args = iterate_args(args)
-
-    args = [str(arg) for arg in args]
+    args = [str(arg) for arg in iterate_args(args, command)]
+    if command:
+        subargs_str = shlex.join(args[1:])
+        args = [" ".join((args[0], subargs_str))]
 
     if os.name == "posix":
         root_kw = "sudo"
@@ -142,7 +142,7 @@ def auto_pw() -> bool:
     return "SUDO_ASKPASS" in os.environ
 
 
-def iterate_args(args):
+def iterate_args(args, command):
     """
     arg can be:
         - command string
@@ -150,8 +150,9 @@ def iterate_args(args):
     """
 
     for i, arg in enumerate(args):
-        if i == 0 and isinstance(arg, str):
+        if i == 0 and isinstance(arg, str) and not command:
             # allow first argument in the form of a command
+            # only split if not in shell or console
             yield from shlex.split(arg)
         elif isinstance(arg, dict):
             for k, v in arg.items():

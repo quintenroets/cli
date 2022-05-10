@@ -13,7 +13,7 @@ def install(*packages, installer_command=None):
             args = shlex.split(p)
             cli.run(command, *args, root=True, check=False)
     else:
-        message = f"Required packages cannot be installed automatically because OS is not Linux"
+        message = "Required packages cannot be installed automatically because OS is not Linux"
         warnings.warn(message)
 
 
