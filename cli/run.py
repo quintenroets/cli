@@ -41,7 +41,7 @@ def get(*args, **kwargs) -> str:
     return output.strip()
 
 
-def check_succes(*args) -> bool:
+def is_succes(*args) -> bool:
     return return_code(*args) == 0
 
 
