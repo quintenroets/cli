@@ -28,9 +28,8 @@ def start(*args, **kwargs):
 
 def lines(*args, **kwargs) -> list[str]:
     output = get(*args, **kwargs)
-    for line in output.splitlines():
-        if line:
-            yield line
+    lines = [line for line in output.splitlines() if line]
+    return lines
 
 
 def get(*args, **kwargs) -> str:
