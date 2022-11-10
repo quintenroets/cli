@@ -3,7 +3,6 @@ import shlex
 import subprocess
 import sys
 import types
-from typing import List, Union
 
 
 def sh(*cmds, **kwargs):
@@ -27,10 +26,11 @@ def start(*args, **kwargs):
     return run(*args, wait=False, **kwargs)
 
 
-def lines(*args, **kwargs) -> List[str]:
-    lines = get(*args, **kwargs).split("\n")
-    lines = [l for l in lines if l]
-    return lines
+def lines(*args, **kwargs) -> list[str]:
+    output = get(*args, **kwargs)
+    for line in output.splitlines():
+        if line:
+            yield line
 
 
 def get(*args, **kwargs) -> str:
@@ -41,7 +41,7 @@ def get(*args, **kwargs) -> str:
     return output.strip()
 
 
-def is_succes(*args) -> bool:
+def is_success(*args) -> bool:
     return return_code(*args) == 0
 
 
@@ -60,7 +60,7 @@ def run(
     capture_output_tty=False,
     title=None,
     **kwargs,
-) -> Union[str, subprocess.CompletedProcess]:
+) -> str | subprocess.CompletedProcess:
     """
     tty: also works for special outputs that clear the output and move the cursor
     """
@@ -145,8 +145,9 @@ def auto_pw() -> bool:
 def iterate_args(args, command):
     """
     arg can be:
-        - command string
-        - iterable of command parts
+
+    - command string
+    - iterable of command parts
     """
 
     for i, arg in enumerate(args):

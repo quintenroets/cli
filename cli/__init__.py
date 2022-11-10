@@ -9,8 +9,18 @@ from .input_interface import ask, confirm, prompt
 from .install import get_install_command, install
 from .output_interface import Message as message
 from .progress import ProgressManager, progress
-from .run import (get, is_succes, lines, prepare_args, return_code, run,
-                  run_commands, sh, start, urlopen)
+from .run import (
+    get,
+    is_success,
+    lines,
+    prepare_args,
+    return_code,
+    run,
+    run_commands,
+    sh,
+    start,
+    urlopen,
+)
 from .status import status
 
 if TYPE_CHECKING:
