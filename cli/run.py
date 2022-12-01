@@ -67,7 +67,7 @@ def run(
     args = prepare_args(args, command=shell or console, root=root)
 
     if console:
-        run("wmctrl -a Konsole", check=False)
+        run("activate_window Konsole", check=False)
         wait = False  # avoid blocking if console not opened yet
         if title is not None:
             args = (f'echo -ne "\\033]30;{title}\\007"; ' + args[0],)
