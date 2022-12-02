@@ -70,7 +70,14 @@ def run(
         wait = False  # avoid blocking if console not opened yet
         if title is not None and False:  # disable for now
             args = (f'echo -ne "\\033]30;{title}\\007"; ' + args[0],)
-        args = ["konsole", "--new-tab", "-e", os.environ["SHELL"], "-c", *args]
+        args = [
+            "konsole",
+            "--new-tab",
+            "-e",
+            os.environ["SHELL"],
+            "-c",
+            shlex.join(args),
+        ]
 
         # needed for non-login scripts to be able to activate console
         if "DISPLAY" not in os.environ:
