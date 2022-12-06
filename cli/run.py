@@ -116,7 +116,8 @@ def prepare_args(args, command=False, root=False):
     args = [str(arg) for arg in iterate_args(args, command)]
     if command:
         subargs_str = shlex.join(args[1:])
-        args = [" ".join((args[0], subargs_str))]
+        if subargs_str:
+            args = [" ".join((args[0], subargs_str))]
 
     if os.name == "posix":
         root_kw = "sudo"
