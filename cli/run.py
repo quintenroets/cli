@@ -76,7 +76,7 @@ def run(
             "-e",
             os.environ["SHELL"],
             "-c",
-            shlex.join(args),
+            *args,
         ]
 
         # needed for non-login scripts to be able to activate console
