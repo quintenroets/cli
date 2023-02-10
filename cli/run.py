@@ -180,6 +180,12 @@ def iterate_args(args, command):
             yield arg
 
 
+def set_title(title: str):
+    echo_message = f"\\033]30;{title}\\007"
+    command = f'echo -ne "{echo_message}"'
+    run(command)
+
+
 def main():
     command = shlex.join(sys.argv[1:])
     run(command, console=True)

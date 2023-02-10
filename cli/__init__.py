@@ -17,6 +17,7 @@ from .run import (
     return_code,
     run,
     run_commands,
+    set_title,
     sh,
     start,
     urlopen,
