@@ -35,7 +35,7 @@ def lines(*args, **kwargs) -> list[str]:
 def get(*args, **kwargs) -> str:
     kwargs["capture_output"] = True
     output = run(*args, **kwargs)
-    if not kwargs.get("tty"):
+    if not kwargs.get("capture_output_tty"):
         output = output.stdout
     return output.strip()
 
