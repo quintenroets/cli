@@ -17,7 +17,7 @@ setup(
     author_email="quinten.roets@gmail.com",
     description="extended subprocess",
     name=NAME,
-    version="1.0",
+    version="1.0.1",
     packages=find_packages(),
     install_requires=read("requirements.txt"),
     entry_points={
