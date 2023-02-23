@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-NAME = "cli"
+NAME = "quinten-cli"
 
 
 def read(filename):
