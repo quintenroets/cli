@@ -58,3 +58,11 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [commit]
+  - repo: local
+    hooks:
+    -   id: publish
+        name: publish on pypi
+        language: system
+        entry: publish
+        pass_filenames: false
+        always_run: true
