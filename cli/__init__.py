@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import readline  # correctly handle arrow keys when asking user input
 from typing import TYPE_CHECKING
 
 import rich
@@ -26,6 +25,13 @@ from .status import status
 
 if TYPE_CHECKING:
     from rich.console import Console
+
+try:
+    import readline
+
+    # correctly handle arrow keys when asking user input
+except ModuleNotFoundError:
+    pass  # not available on Windows
 
 
 class Proxy:
