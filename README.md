@@ -8,7 +8,7 @@ Package with utilities to interact with the command line interface:
 ## Installation
 
 ```shell
-pip install git+https://github.com/quintenroets/cli
+pip install quinten-cli
 ```
 
 ## Usage
