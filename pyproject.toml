@@ -1,0 +1,33 @@
+[project]
+name = "quinten-cli"
+version = "1.1.1"
+description = ""
+authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "python-dotenv",
+    "rich",
+    "sh",
+    "superpathlib",
+]
+
+[project.urls]
+"Source Code" = "https://github.com/quintenroets/cli"
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "twine"
+]
+test = [
+    "pytest"
+]
+
+[project.scripts]
+konsolerun = "cli.run:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
