@@ -4,6 +4,8 @@ import subprocess
 import sys
 import types
 
+from plib import Path
+
 
 def sh(*cmds, **kwargs):
     return run_commands(*cmds, shell=True, **kwargs)
@@ -146,7 +148,9 @@ def prepare_args(args, command=False, root=False):
 
 
 def auto_pw() -> bool:
-    return "SUDO_ASKPASS" in os.environ
+    askpass_key = "SUDO_ASKPASS"
+    askpass_program = os.environ.get(askpass_key)
+    return askpass_program is not None and Path(askpass_program).exists()
 
 
 def iterate_args(args, command):
