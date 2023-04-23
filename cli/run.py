@@ -133,11 +133,10 @@ def prepare_args(args, command=False, root=False):
                 env.load()
 
             if command:
-                arg = args[0]
-                if root_kw not in arg:
-                    arg = root_kw + " " + arg
+                if root_kw not in args[0]:
+                    args[0] = root_kw + " " + args[0]
                 if auto_pw():
-                    args = [arg.replace(root_kw, root_kw + " -A")]
+                    args[0] = args[0].replace(root_kw, root_kw + " -A")
             else:
                 if args[0] != root_kw:
                     args.insert(0, root_kw)
