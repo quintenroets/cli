@@ -70,8 +70,8 @@ def run(
     if console:
         run("activate_window Konsole", check=False)
         wait = False  # avoid blocking if console not opened yet
-        if title is not None and False:  # disable for now
-            args = (f'echo -ne "\\033]30;{title}\\007"; ' + args[0],)
+        if title is not None:
+            args = (f"echo -ne '\\033]30;{title}\\007'; " + args[0],)
         args = [
             "konsole",
             "--new-tab",
