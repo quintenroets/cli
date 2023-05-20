@@ -1,3 +1,4 @@
+fail_fast: true
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -5,13 +6,13 @@ repos:
       - id: end-of-file-fixer
         stages: [commit]
   - repo: https://github.com/myint/docformatter
-    rev: v1.6.2
+    rev: v1.7.1
     hooks:
       - id: docformatter
         args: [--in-place, --pre-summary-newline, --close-quotes-on-newline]
         stages: [commit]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.4.0
     hooks:
     -   id: pyupgrade
         args: [--py310-plus]
@@ -49,15 +50,6 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [push]
-  - repo: local
-    hooks:
-      - id: git
-        name: git
-        entry: git update-index --again
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [commit]
   - repo: local
     hooks:
     -   id: publish

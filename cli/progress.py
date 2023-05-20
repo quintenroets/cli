@@ -2,16 +2,18 @@ import sys
 
 
 def get_progress():
-    from rich.progress import TextColumn  # noqa: autoimport
-    from rich.progress import (BarColumn, Progress,  # noqa: autoimport
-                               TimeRemainingColumn)
+    from rich.progress import TimeRemainingColumn  # noqa: autoimport
+    from rich.progress import BarColumn, Progress, TextColumn  # noqa: autoimport
 
     columns = [TextColumn("[progress.description]{task.description}")]
+
+    column_message = (
+        "[progress.completed]{task.completed}/[progress.total]"
+        "{task.total:>0.0f} {task.fields[unit]}"
+    )
     columns.extend(
         (
-            TextColumn(
-                "[progress.completed]{task.completed}/[progress.total]{task.total:>0.0f} {task.fields[unit]}"
-            ),
+            TextColumn(column_message),
             BarColumn(bar_width=1000),  # shrinks depending on other columns
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             TimeRemainingColumn(),
@@ -32,7 +34,7 @@ class ProgressManager:
         return cls._prog
 
 
-def progress(sequence, description="", unit="it", total=None):
+def progress(sequence, description="", unit="it", total=None, cleanup=False):
     # classmethod properties require python 3.9
     prog = ProgressManager.prog() if sys.version_info < (3, 9) else ProgressManager.prog
     prog.__enter__()
@@ -41,5 +43,6 @@ def progress(sequence, description="", unit="it", total=None):
     ProgressManager.busy_amount += 1
     yield from prog.track(sequence, total, task_id, description)
     ProgressManager.busy_amount -= 1
-    if ProgressManager.busy_amount == 0:
-        pass  # prog.__exit__(None, None, None)  # disable for now to fix issue of progress appearing twice
+    # cleanup False by default because it makes completed progressbar appear twice
+    if ProgressManager.busy_amount == 0 and cleanup:
+        prog.__exit__(None, None, None)
