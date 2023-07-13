@@ -60,10 +60,11 @@ def run(
     shell=False,
     capture_output_tty=False,
     title=None,
+    verbose_errors=True,
     **kwargs,
 ) -> str | subprocess.CompletedProcess:
-    """
-    tty: also works for special outputs that clear the output and move the cursor
+    """Tty: also works for special outputs that clear the output and move the
+    cursor.
     """
     args = prepare_args(args, command=shell or console, root=root)
 
@@ -88,29 +89,30 @@ def run(
     if not wait:
         kwargs["stdout"] = kwargs["stderr"] = subprocess.DEVNULL
 
-    try:
-        if capture_output_tty:
-            import tempfile  # noqa: autoimport
+    if capture_output_tty:
+        import tempfile  # noqa: autoimport
 
-            import pexpect  # noqa: autoimport
+        import pexpect  # noqa: autoimport
 
-            with tempfile.TemporaryFile() as tmp:
-                child = pexpect.spawn(args[0], [*args[1:]], timeout=None, logfile=tmp)
-                if "capture_output" in kwargs:
-                    child.expect(pexpect.EOF)
-                else:
-                    child.interact()
-                tmp.seek(0)
-                res = tmp.read().decode()
-        else:
+        with tempfile.TemporaryFile() as tmp:
+            child = pexpect.spawn(args[0], [*args[1:]], timeout=None, logfile=tmp)
+            if "capture_output" in kwargs:
+                child.expect(pexpect.EOF)
+            else:
+                child.interact()
+            tmp.seek(0)
+            res = tmp.read().decode()
+    else:
+        try:
             res = (
                 subprocess.run(args, text=text, check=check, shell=shell, **kwargs)
                 if wait
                 else subprocess.Popen(args, shell=shell, **kwargs)
             )
-    except subprocess.CalledProcessError as e:
-        raise Exception(e.stderr or e)  # more verbose errors
-
+        except subprocess.CalledProcessError as error:
+            if verbose_errors:
+                error = Exception(error.stderr or error)  # more verbose errors
+            raise error
     return res
 
 
