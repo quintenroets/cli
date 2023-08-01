@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import rich
 
+from .exceptions import CalledProcessError
 from .input_interface import ask, confirm, prompt
 from .install import get_install_command, install
 from .output_interface import Message as message

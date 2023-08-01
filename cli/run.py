@@ -6,6 +6,8 @@ import types
 
 from plib import Path
 
+from . import exceptions
+
 
 def sh(*cmds, **kwargs):
     return run_commands(*cmds, shell=True, **kwargs)
@@ -111,7 +113,8 @@ def run(
             )
         except subprocess.CalledProcessError as error:
             if verbose_errors:
-                error = Exception(error.stderr or error)  # more verbose errors
+                # more verbose errors
+                error = exceptions.CalledProcessError(error.stderr or error)
             raise error
     return res
 

@@ -1,0 +1,2 @@
+class CalledProcessError(Exception):
+    pass
