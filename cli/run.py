@@ -44,12 +44,12 @@ def get(*args, **kwargs) -> str:
     return output.strip()
 
 
-def is_success(*args) -> bool:
-    return return_code(*args) == 0
+def is_success(*args, **kwargs) -> bool:
+    return return_code(*args, **kwargs) == 0
 
 
-def return_code(*args) -> int:
-    return run(*args, check=False, capture_output=True).returncode
+def return_code(*args, **kwargs) -> int:
+    return run(*args, check=False, capture_output=True, **kwargs).returncode
 
 
 def run(
