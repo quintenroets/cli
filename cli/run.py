@@ -89,7 +89,9 @@ def run(
             os.environ["DISPLAY"] = ":0.0"
 
     if not wait:
-        kwargs["stdout"] = kwargs["stderr"] = subprocess.DEVNULL
+        keys = "stdout", "stderr"
+        for key in keys:
+            kwargs.setdefault(key, subprocess.DEVNULL)
 
     if capture_output_tty:
         import tempfile  # noqa: autoimport
@@ -109,7 +111,7 @@ def run(
             res = (
                 subprocess.run(args, text=text, check=check, shell=shell, **kwargs)
                 if wait
-                else subprocess.Popen(args, shell=shell, **kwargs)
+                else subprocess.Popen(args, text=text, shell=shell, **kwargs)
             )
         except subprocess.CalledProcessError as error:
             if verbose_errors:
