@@ -1,14 +1,16 @@
 def status(*args, **kwargs):
-    import contextlib  # noqa: autoimport
+    import contextlib  # noqa: E402, autoimport
 
-    import cli  # noqa: autoimport
+    import cli  # noqa: E402, autoimport
 
     try:
         get_ipython()
-    except:
+    except NameError:
         notebook = False
     else:
         notebook = True
+
+    cli.console.clear_live()
 
     return (
         cli.console.status(*args, **kwargs)
