@@ -24,17 +24,17 @@ repos:
       - id: black
   - repo: local
     hooks:
-      - id: pytest-check
-        name: pytest-check
-        entry: pytest
+      - id: bump-version
+        name: bump-version
+        entry: sh -c "git diff --staged pyproject.toml | grep version || bump2version --config-file .bumpversion.cfg patch"
         language: system
         pass_filenames: false
         always_run: true
   - repo: local
     hooks:
-      - id: check-version-bumped
-        name: check-version-bumped
-        entry: sh -c "git diff --staged pyproject.toml | grep version"
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest
         language: system
         pass_filenames: false
         always_run: true

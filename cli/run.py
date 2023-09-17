@@ -3,6 +3,8 @@ import shlex
 import subprocess
 import sys
 import types
+from collections.abc import Iterable
+from typing import Any
 
 from plib import Path
 
@@ -18,6 +20,15 @@ def run_commands(*cmds, **kwargs):
         run(cmd, **kwargs)
 
 
+def pipe(commands: Iterable[Iterable[Any]], return_lines=False, **kwargs):
+    output = None
+    for args in commands:
+        output = get(*args, input=output, **kwargs)
+    if return_lines and output is not None:
+        output = extract_lines(output)
+    return output
+
+
 def urlopen(*urls):
     for url in urls:
         if os.name == "nt":
@@ -31,17 +42,22 @@ def start(*args, **kwargs):
 
 
 def lines(*args, **kwargs) -> list[str]:
-    output = get(*args, **kwargs)
-    lines = [line for line in output.splitlines() if line]
-    return lines
+    return get(*args, return_lines=True, **kwargs)
 
 
-def get(*args, **kwargs) -> str:
+def get(*args, return_lines=False, **kwargs) -> str | list[str]:
     kwargs["capture_output"] = True
     output = run(*args, **kwargs)
     if not kwargs.get("capture_output_tty"):
         output = output.stdout
-    return output.strip()
+    output = output.strip()
+    if return_lines:
+        output = extract_lines(output)
+    return output
+
+
+def extract_lines(output: str) -> list[str]:
+    return [line for line in output.splitlines() if line]
 
 
 def is_success(*args, **kwargs) -> bool:
@@ -94,9 +110,9 @@ def run(
             kwargs.setdefault(key, subprocess.DEVNULL)
 
     if capture_output_tty:
-        import tempfile  # noqa: autoimport
+        import tempfile  # noqa: autoimport, E402
 
-        import pexpect  # noqa: autoimport
+        import pexpect  # noqa: autoimport, E402
 
         with tempfile.TemporaryFile() as tmp:
             child = pexpect.spawn(args[0], [*args[1:]], timeout=None, logfile=tmp)
@@ -135,7 +151,7 @@ def prepare_args(args, command=False, root=False):
 
         if root:
             if not auto_pw():
-                from . import env  # noqa: autoimport
+                from . import env  # noqa: autoimport, E402
 
                 env.load()
 

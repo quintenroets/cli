@@ -13,6 +13,7 @@ from .run import (
     get,
     is_success,
     lines,
+    pipe,
     prepare_args,
     return_code,
     run,
