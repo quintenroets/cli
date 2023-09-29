@@ -1,6 +1,8 @@
+[![PyPI version](https://badge.fury.io/py/quinten-cli.svg)](https://badge.fury.io/py/quinten-cli)
+
 # Cli
 
-Package with utilities to interact with the command line interface:
+Package with utilities to interact with the command line:
 * Output interactions
 * Input interactions
 * Running processes
