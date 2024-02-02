@@ -15,7 +15,7 @@ def sh(*cmds, **kwargs):
     return run_commands(*cmds, shell=True, **kwargs)
 
 
-def run_commands(*cmds, **kwargs):
+def run_commands(*cmds: str, cwd: Path | None = None, **kwargs: Any):
     for cmd in cmds:
         run(cmd, **kwargs)
 
@@ -29,7 +29,7 @@ def pipe(commands: Iterable[Iterable[Any]], return_lines=False, **kwargs):
     return output
 
 
-def urlopen(*urls):
+def urlopen(*urls: str) -> None:
     for url in urls:
         if os.name == "nt":
             os.startfile(url)
