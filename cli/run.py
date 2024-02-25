@@ -6,7 +6,7 @@ import types
 from collections.abc import Iterable
 from typing import Any
 
-from plib import Path
+from superpathlib import Path
 
 from . import exceptions
 
