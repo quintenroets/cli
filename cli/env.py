@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from plib import Path
+from superpathlib import Path
 
 
 def load(path=None):
