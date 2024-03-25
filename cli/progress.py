@@ -2,8 +2,12 @@ import sys
 
 
 def get_progress():
-    from rich.progress import TimeRemainingColumn  # noqa: autoimport
-    from rich.progress import BarColumn, Progress, TextColumn  # noqa: autoimport
+    from rich.progress import (  # noqa: autoimport
+        BarColumn,
+        Progress,
+        TextColumn,
+        TimeRemainingColumn,  # noqa: autoimport
+    )
 
     columns = [TextColumn("[progress.description]{task.description}")]
 
