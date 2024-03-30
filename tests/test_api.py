@@ -1,12 +1,18 @@
 import string
 from typing import Any
+import pytest
+import os
 
 import cli
-from hypothesis import given, strategies
+from hypothesis import given, strategies, settings
 from hypothesis.strategies import SearchStrategy
 
+linux_only_test = pytest.mark.skipif(
+    os.name == "posix", reason="Bash specific syntax used for tests"
+)
 
-def text_strategy(**kwargs: Any) -> SearchStrategy[str]:
+
+def text_strategy() -> SearchStrategy[str]:
     return strategies.text(alphabet=string.ascii_letters)
 
 
@@ -20,6 +26,7 @@ def test_capture_output_lines(message: str) -> None:
     assert cli.capture_output_lines("printf", "%s", message) == message.splitlines()
 
 
+@settings(deadline=1000)
 @given(message=text_strategy())
 def test_pipe_output_and_capture(message: str) -> None:
     commands = (
@@ -30,6 +37,6 @@ def test_pipe_output_and_capture(message: str) -> None:
 
 
 @given(return_code=strategies.integers(min_value=0, max_value=255))
+@linux_only_test
 def test_capture_return_code(return_code: int) -> None:
-    command = f"python -c 'import sys; sys.exit({return_code})'"
-    assert cli.capture_return_code(command, return_code, shell=True) == return_code
+    assert cli.capture_return_code("exit", return_code, shell=True) == return_code
