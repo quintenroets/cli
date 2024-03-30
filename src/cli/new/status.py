@@ -1,6 +1,7 @@
-def status(*args, **kwargs):
-    import contextlib  # noqa: E402, autoimport
+import contextlib
 
+
+def status(*args, **kwargs):
     import cli  # noqa: E402, autoimport
 
     try:
