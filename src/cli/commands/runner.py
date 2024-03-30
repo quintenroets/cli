@@ -41,8 +41,9 @@ class Runner(Generic[T1]):
 
     @cached_property
     def command_parts(self) -> tuple[str, ...]:
+        use_shell_command = self.shell or self.console
         command_preparer = CommandPreparer(
-            self.items, self.shell, self.console, self.root, self.title
+            self.items, use_shell_command, self.console, self.root, self.title
         )
         return command_preparer.run()
 
@@ -124,7 +125,6 @@ class Runner(Generic[T1]):
 
     def prepare_console_command(self) -> None:
         self.console = True
-        self.shell = True
         self.activate_console()
         if "DISPLAY" not in os.environ:  # pragma: nocover
             # needed for non-login scripts to be able to activate console

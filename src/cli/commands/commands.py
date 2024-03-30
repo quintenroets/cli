@@ -10,7 +10,8 @@ from typing import Protocol
 
 
 class StringLike(Protocol):
-    def __str__(self) -> str: ...
+    def __str__(self) -> str:
+        ...
 
 
 CommandItem = StringLike | dict[str, StringLike] | set[StringLike] | list[StringLike]
@@ -19,10 +20,10 @@ CommandItem = StringLike | dict[str, StringLike] | set[StringLike] | list[String
 @dataclass
 class CommandPreparer:
     items: tuple[CommandItem, ...]
-    use_shell_command: bool
-    use_console: bool
-    use_root: bool
-    title: str | None
+    use_shell_command: bool = False
+    use_console: bool = False
+    use_root: bool = False
+    title: str | None = None
     askpass_key: str = "SUDO_ASKPASS"
     root_keyword: str = "sudo"
 
