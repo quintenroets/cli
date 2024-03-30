@@ -5,6 +5,7 @@ from .commands import (
     completes_successfully,
     install,
     launch,
+    launch_commands,
     open_urls,
     pipe_output_and_capture,
     run,
