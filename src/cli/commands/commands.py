@@ -48,7 +48,7 @@ class CommandPreparer:
         if self.use_console:
             if self.title is not None:
                 command = self.create_title_command() + command
-            shell = os.environ["SHELL"]
+            shell = os.getenv("SHELL") or "/bin/bash"
             commands = ("konsole", "--new-tab", "-e", shell, "-c", command)
         else:
             commands = (command,)
