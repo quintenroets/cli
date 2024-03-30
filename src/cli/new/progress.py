@@ -1,9 +1,14 @@
 import sys
+from typing import Optional
 
 
 def get_progress():
-    from rich.progress import TimeRemainingColumn  # noqa: autoimport
-    from rich.progress import BarColumn, Progress, TextColumn  # noqa: autoimport
+    from rich.progress import (  # noqa: autoimport
+        BarColumn,
+        Progress,
+        TextColumn,
+        TimeRemainingColumn,  # noqa: autoimport
+    )
 
     columns = [TextColumn("[progress.description]{task.description}")]
 
@@ -34,7 +39,13 @@ class ProgressManager:
         return cls._prog
 
 
-def progress(sequence, description="", unit="it", total=None, cleanup=False):
+def progress(
+    sequence,
+    description: str = "",
+    unit: str = "it",
+    total: Optional[int] = None,
+    cleanup: bool = False,
+):
     # classmethod properties require python 3.9
     prog = ProgressManager.prog() if sys.version_info < (3, 9) else ProgressManager.prog
     prog.__enter__()

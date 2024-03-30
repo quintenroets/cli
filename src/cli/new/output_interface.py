@@ -1,17 +1,17 @@
 import os
 import sys
 
-UP = "\x1B[1A"
-CLR = "\x1B[0K"
+UP = "\x1b[1A"
+CLR = "\x1b[0K"
 NEWLINE = "\n"
 CLR_N = f"{CLR}{NEWLINE}"
 
 
 class Message:
-    def __init__(self, message=None):
+    def __init__(self, message=None) -> None:
         self._message = message
 
-    def show(self, message):
+    def show(self, message) -> None:
         message = message.strip()
         sys.stdout.write(f"{self.header}{message.replace(NEWLINE, CLR_N)}{CLR_N}")
         self._message = message
@@ -40,7 +40,7 @@ class Message:
         return self._message
 
     @message.setter
-    def message(self, message):
+    def message(self, message) -> None:
         if message is not None:
             self.show(message)
 
@@ -50,5 +50,5 @@ class Message:
         self.message = message
         return self
 
-    def __exit__(self, *_):
+    def __exit__(self, *_) -> None:
         print(self.header, end="")

@@ -37,10 +37,10 @@ except ModuleNotFoundError:
 
 
 class Proxy:
-    def __init__(self, handler):
+    def __init__(self, handler) -> None:
         self.__handler = handler
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         return self.__handler().__getattribute__(name)
 
 

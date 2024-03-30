@@ -3,7 +3,7 @@ import shlex
 import cli
 
 
-def install(*packages, installer_command=None):
+def install(*packages, installer_command=None) -> None:
     import platform  # noqa: autoimport
     import warnings  # noqa: autoimport
 

@@ -1,4 +1,4 @@
-def ask(question, addition=" [Y/n]", **choice_mappers):
+def ask(question, addition: str = " [Y/n]", **choice_mappers):
     choice_mappers = {True: ["", "yes", "y"], False: ["no", "n"]} | (
         choice_mappers or {}
     )

@@ -1,33 +1,32 @@
 import time
 
-import pytest
-
 import cli
+import pytest
 
 SLEEP_INTERVAL = 0.01
 ITERATIONS = 200
 
 
-def sleep():
+def sleep() -> None:
     time.sleep(SLEEP_INTERVAL)
 
 
 @pytest.mark.skip(reason="requires manual inspection")
-def test_progress():
+def test_progress() -> None:
     items = cli.progress(range(ITERATIONS), description="counting", unit="items")
     for i in items:
         sleep()
 
 
 @pytest.mark.skip(reason="requires manual inspection")
-def test_progress_with_cleanup():
+def test_progress_with_cleanup() -> None:
     items = cli.progress(range(ITERATIONS), description="counting", unit="items")
     for i in items:
         sleep()
 
 
 @pytest.mark.skip(reason="requires manual inspection")
-def test_progress_double():
+def test_progress_double() -> None:
     for i in cli.progress(range(ITERATIONS), description="outer loop", unit="items"):
         sleep()
         if i == 4:
@@ -36,7 +35,7 @@ def test_progress_double():
 
 
 @pytest.mark.skip(reason="requires manual inspection")
-def test_progress_with_status():
+def test_progress_with_status() -> None:
     for i in cli.progress(range(ITERATIONS), "advance"):
         sleep()
         with cli.status("waiting"):

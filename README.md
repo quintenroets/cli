@@ -1,28 +1,24 @@
-[![PyPI version](https://badge.fury.io/py/quinten-cli.svg)](https://badge.fury.io/py/quinten-cli)
-
 # Cli
+[![PyPI version](https://badge.fury.io/py/powercli.svg)](https://badge.fury.io/py/powercli)
+![Python version](https://img.shields.io/badge/python-3.10+-brightgreen)
+![Operating system](https://img.shields.io/badge/os-linux%20%7c%20macOS%20%7c%20windows-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
 
-Package with utilities to interact with the command line:
-* Output interactions
-* Input interactions
-* Running processes
-
-## Installation
-
-```shell
-pip install quinten-cli
-```
+High-level CLI:
+* Run commands
+* Capture outputs
+* Ask user input
+* Show progress
 
 ## Usage
-Use 
 
-```shell
+Run
+```python
 import cli
-```
-instead of
 
+cli.run("ls", "-l")
+```
+## Installation
 ```shell
-import subprocess
+pip install powercli
 ```
-
-to run processes

@@ -1,6 +1,5 @@
-from hypothesis import given, strategies
-
 import cli
+from hypothesis import given, strategies
 
 
 def text_strategy(**kwargs):
@@ -12,17 +11,17 @@ def text_strategy(**kwargs):
 
 
 @given(message=text_strategy())
-def test_output(message):
+def test_output(message) -> None:
     assert cli.get("printf", "%s", message) == message
 
 
 @given(message=text_strategy())
-def test_lines(message):
+def test_lines(message) -> None:
     assert cli.lines("printf", "%s", message) == message.splitlines()
 
 
 @given(message=text_strategy())
-def test_pipe(message):
+def test_pipe(message) -> None:
     commands = (
         ("printf", "%s", message),
         ("grep", "-F", "--", message),
@@ -31,5 +30,5 @@ def test_pipe(message):
 
 
 @given(return_code=strategies.integers(min_value=0, max_value=255))
-def test_return_code(return_code):
+def test_return_code(return_code) -> None:
     assert cli.return_code("exit", return_code, shell=True) == return_code

@@ -15,12 +15,12 @@ def sh(*cmds, **kwargs):
     return run_commands(*cmds, shell=True, **kwargs)
 
 
-def run_commands(*cmds: str, cwd: Path | None = None, **kwargs: Any):
+def run_commands(*cmds: str, cwd: Path | None = None, **kwargs: Any) -> None:
     for cmd in cmds:
         run(cmd, **kwargs)
 
 
-def pipe(commands: Iterable[Iterable[Any]], return_lines=False, **kwargs):
+def pipe(commands: Iterable[Iterable[Any]], return_lines: bool = False, **kwargs):
     output = None
     for args in commands:
         output = get(*args, input=output, **kwargs)
@@ -45,7 +45,7 @@ def lines(*args, **kwargs) -> list[str]:
     return get(*args, return_lines=True, **kwargs)
 
 
-def get(*args, return_lines=False, **kwargs) -> str | list[str]:
+def get(*args, return_lines: bool = False, **kwargs) -> str | list[str]:
     kwargs["capture_output"] = True
     output = run(*args, **kwargs)
     if not kwargs.get("capture_output_tty"):
@@ -70,15 +70,15 @@ def return_code(*args, **kwargs) -> int:
 
 def run(
     *args,
-    root=False,
-    wait=True,
-    console=False,
-    text=True,
-    check=True,
-    shell=False,
-    capture_output_tty=False,
+    root: bool = False,
+    wait: bool = True,
+    console: bool = False,
+    text: bool = True,
+    check: bool = True,
+    shell: bool = False,
+    capture_output_tty: bool = False,
     title=None,
-    verbose_errors=True,
+    verbose_errors: bool = True,
     **kwargs,
 ) -> str | subprocess.CompletedProcess:
     """Tty: also works for special outputs that clear the output and move the
@@ -137,7 +137,7 @@ def run(
     return res
 
 
-def prepare_args(args, command=False, root=False):
+def prepare_args(args, command: bool = False, root: bool = False):
     args = [str(arg) for arg in iterate_args(args, command)]
     if command:
         subargs_str = shlex.join(args[1:])
@@ -206,13 +206,13 @@ def iterate_args(args, command):
             yield arg
 
 
-def set_title(title: str):
+def set_title(title: str) -> None:
     echo_message = f"\\033]30;{title}\\007"
     command = f'echo -ne "{echo_message}"'
     run(command)
 
 
-def main():
+def main() -> None:
     command = shlex.join(sys.argv[1:])
     run(command, console=True)
 
