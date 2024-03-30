@@ -5,6 +5,7 @@ import typing
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from functools import cached_property
+from pathlib import Path
 from typing import Any, Generic, TypeVar
 
 from ..models import CalledProcessError
@@ -19,16 +20,19 @@ class Runner(Generic[T1]):
     items: tuple[CommandItem, ...]
     root: bool = False
     console: bool = False
+    title: str | None = None
+    quiet: bool = False
+
+    # subprocess arguments
     text: bool = True
     check: bool = True
     shell: bool = False
-    capture_output_tty: bool = False
-    title: str | None = None
-    verbose_errors: bool = True
     input: str | None = None
     stdout: int | None = None
     stderr: int | None = None
-    _capture_output: bool = False
+    cwd: Path | str | None = None
+
+    verbose_errors: bool = True
     kwargs: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -62,27 +66,30 @@ class Runner(Generic[T1]):
             child.interact()
 
     def capture_output(self) -> str:
-        self._capture_output = True
-        return self.run().stdout.strip()
+        return self.run(capture_output=True).stdout.strip()
 
     def capture_return_code(self) -> int:
         self.check = False
-        self._capture_output = True
-        return self.run().returncode
+        return self.run(capture_output=True).returncode
 
-    def run(self) -> subprocess.CompletedProcess[T1]:
-        return self.run_with_exception_handling(self._run)
+    def run(
+        self, capture_output: bool | None = None
+    ) -> subprocess.CompletedProcess[T1]:
+        if capture_output is None:
+            capture_output = not self.quiet
+        return self.run_with_exception_handling(self._run, capture_output)
 
-    def _run(self) -> subprocess.CompletedProcess[T1]:
+    def _run(self, capture_output: bool) -> subprocess.CompletedProcess[T1]:
         return subprocess.run(
             self.command_parts,
             text=self.text,
             check=self.check,
             shell=self.shell,
-            capture_output=self._capture_output,
+            capture_output=capture_output,
             input=self.input,
             stdout=self.stdout,
             stderr=self.stderr,
+            cwd=self.cwd,
         )
 
     def run_in_console(self) -> subprocess.Popen[str]:
@@ -103,11 +110,14 @@ class Runner(Generic[T1]):
             shell=self.shell,
             stdout=self.stdout,
             stderr=self.stderr,
+            cwd=self.cwd,
         )
 
-    def run_with_exception_handling(self, runner: Callable[[], T2]) -> T2:
+    def run_with_exception_handling(
+        self, runner: Callable[..., T2], *args: Any, **kwargs: Any
+    ) -> T2:
         try:
-            return runner()
+            return runner(*args, **kwargs)
         except subprocess.CalledProcessError as error:
             verbose = self.verbose_errors
             raise CalledProcessError(error.stderr or error) if verbose else error
