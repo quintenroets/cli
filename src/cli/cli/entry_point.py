@@ -6,4 +6,4 @@ import cli
 
 def entry_point() -> None:
     command = shlex.join(sys.argv[1:])
-    cli.run(command, console=True)
+    cli.run_in_console(command)
