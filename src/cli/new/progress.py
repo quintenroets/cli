@@ -1,5 +1,4 @@
 import sys
-from typing import Optional
 
 
 def get_progress():
@@ -43,7 +42,7 @@ def progress(
     sequence,
     description: str = "",
     unit: str = "it",
-    total: Optional[int] = None,
+    total: int | None = None,
     cleanup: bool = False,
 ):
     # classmethod properties require python 3.9
