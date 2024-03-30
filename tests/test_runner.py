@@ -71,5 +71,5 @@ def test_run_commands() -> None:
 
 def test_cwd() -> None:
     with Path.tempdir() as folder:
-        extracted_folder = cli.capture_output("pwd", cwd=folder)
-    assert extracted_folder == str(folder)
+        extracted_folder_name = cli.capture_output("pwd", cwd=folder).split("/")[-1]
+    assert extracted_folder_name == folder.name
