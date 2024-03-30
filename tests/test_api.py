@@ -7,7 +7,7 @@ from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
 
 linux_only_test = pytest.mark.skipif(
-    os.name == "posix", reason="Bash specific syntax used for tests"
+    os.name != "posix", reason="Bash specific syntax used for tests"
 )
 
 
