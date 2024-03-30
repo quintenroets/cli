@@ -6,6 +6,7 @@ from .run import (
     capture_return_code,
     completes_successfully,
     launch,
+    launch_commands,
     pipe_output_and_capture,
     run,
     run_commands,

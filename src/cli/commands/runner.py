@@ -77,7 +77,7 @@ class Runner(Generic[T1]):
         self, capture_output: bool | None = None
     ) -> subprocess.CompletedProcess[T1]:
         if capture_output is None:
-            capture_output = not self.quiet
+            capture_output = self.quiet
         return self.run_with_exception_handling(self._run, capture_output)
 
     def _run(self, capture_output: bool) -> subprocess.CompletedProcess[T1]:
