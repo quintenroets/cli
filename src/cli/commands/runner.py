@@ -128,4 +128,7 @@ class Runner(Generic[T1]):
     @classmethod
     def activate_console(cls) -> None:
         args = ("activate_window Konsole",)
-        Runner(args, check=False).run()
+        try:
+            Runner(args, check=False).run()
+        except FileNotFoundError:
+            pass
