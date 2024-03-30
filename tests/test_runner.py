@@ -5,6 +5,7 @@ import cli
 import pytest
 from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
+from superpathlib import Path
 
 linux_only_test = pytest.mark.skipif(
     os.name != "posix", reason="Bash specific syntax used for tests"
@@ -66,3 +67,9 @@ def test_command_and_argument_combination() -> None:
 def test_run_commands() -> None:
     commands = ("ls", "pwd")
     cli.run_commands(*commands)
+
+
+def test_cwd() -> None:
+    with Path.tempdir() as folder:
+        extracted_folder_name = cli.capture_output("pwd", cwd=folder).split("/")[-1]
+    assert extracted_folder_name == folder.name
