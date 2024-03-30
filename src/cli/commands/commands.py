@@ -10,8 +10,7 @@ from typing import Protocol
 
 
 class StringLike(Protocol):
-    def __str__(self) -> str:
-        ...
+    def __str__(self) -> str: ...
 
 
 CommandItem = StringLike | dict[str, StringLike] | set[StringLike] | list[StringLike]
