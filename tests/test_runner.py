@@ -39,3 +39,14 @@ def test_pipe_output_and_capture(message: str) -> None:
 @linux_only_test
 def test_capture_return_code(return_code: int) -> None:
     assert cli.capture_return_code("exit", return_code, shell=True) == return_code
+
+
+@linux_only_test
+def test_exception_handling() -> None:
+    with pytest.raises(cli.CalledProcessError):
+        cli.run("exit 1", shell=True)
+
+
+def test_command_not_found_exception_handling() -> None:
+    with pytest.raises(FileNotFoundError):
+        cli.run("non_existing_command")

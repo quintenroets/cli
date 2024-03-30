@@ -121,7 +121,7 @@ class Runner(Generic[T1]):
     def prepare_console_command(self) -> None:
         self.activate_console()
         self.wait = False  # avoid blocking for console opening
-        if "DISPLAY" not in os.environ:
+        if "DISPLAY" not in os.environ:  # pragma: nocover
             # needed for non-login scripts to be able to activate console
             os.environ["DISPLAY"] = ":0.0"
 
