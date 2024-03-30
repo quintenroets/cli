@@ -120,7 +120,7 @@ class Runner(Generic[T1]):
 
     def prepare_console_command(self) -> None:
         self.activate_console()
-        self.wait = False  # avoid blocking for console openening
+        self.wait = False  # avoid blocking for console opening
         if "DISPLAY" not in os.environ:
             # needed for non-login scripts to be able to activate console
             os.environ["DISPLAY"] = ":0.0"
@@ -130,5 +130,5 @@ class Runner(Generic[T1]):
         args = ("activate_window Konsole",)
         try:
             Runner(args, check=False).run()
-        except FileNotFoundError:
+        except FileNotFoundError:  # pragma: nocover
             pass
