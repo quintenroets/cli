@@ -1,10 +1,9 @@
-import string
-from typing import Any
-import pytest
 import os
+import string
 
 import cli
-from hypothesis import given, strategies, settings
+import pytest
+from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
 
 linux_only_test = pytest.mark.skipif(
