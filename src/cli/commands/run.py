@@ -10,6 +10,10 @@ def run(*args: CommandItem, **kwargs: Any) -> subprocess.CompletedProcess[str]:
     return Runner[str](args, kwargs=kwargs).run()
 
 
+def run_in_console(*args: CommandItem, **kwargs: Any) -> subprocess.Popen[str]:
+    return Runner[str](args, kwargs=kwargs).run_in_console()
+
+
 def capture_output_lines(*args: CommandItem, **kwargs: Any) -> list[str]:
     output = capture_output(*args, **kwargs)
     return [line for line in output.splitlines() if line]
@@ -28,7 +32,7 @@ def capture_return_code(*args: CommandItem, **kwargs: Any) -> int:
 
 
 def launch(*args: CommandItem, **kwargs: Any) -> subprocess.Popen[str]:
-    return Runner(args, wait=False, kwargs=kwargs).launch()
+    return Runner(args, kwargs=kwargs).launch()
 
 
 def run_commands_in_shell(*commands: str, **kwargs: Any) -> None:
@@ -37,7 +41,8 @@ def run_commands_in_shell(*commands: str, **kwargs: Any) -> None:
 
 def run_commands(*commands: str, shell: bool = False, **kwargs: Any) -> None:
     for command in commands:
-        Runner(tuple(command), shell=shell, kwargs=kwargs).run()
+        args = (command,)
+        Runner(args, shell=shell, kwargs=kwargs).run()
 
 
 def pipe_output_and_capture(

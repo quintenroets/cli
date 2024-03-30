@@ -41,6 +41,13 @@ def test_capture_return_code(return_code: int) -> None:
     assert cli.capture_return_code("exit", return_code, shell=True) == return_code
 
 
+@given(return_code=strategies.integers(min_value=0, max_value=255))
+@linux_only_test
+def test_completes_successfully(return_code: int) -> None:
+    success = return_code == 0
+    assert cli.completes_successfully("exit", return_code, shell=True) == success
+
+
 @linux_only_test
 def test_exception_handling() -> None:
     with pytest.raises(cli.CalledProcessError):
@@ -50,3 +57,12 @@ def test_exception_handling() -> None:
 def test_command_not_found_exception_handling() -> None:
     with pytest.raises(FileNotFoundError):
         cli.run("non_existing_command")
+
+
+def test_command_and_argument_combination() -> None:
+    cli.run("ls -l", "-a")
+
+
+def test_run_commands() -> None:
+    commands = ("ls", "pwd")
+    cli.run_commands(*commands)
