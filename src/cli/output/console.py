@@ -1,27 +1,7 @@
-import typing
-from collections.abc import Callable
-from functools import cached_property
-from typing import TYPE_CHECKING, Generic, TypeVar
-
-import rich
-
-T = TypeVar("T")
-
-if TYPE_CHECKING:
-    from rich.console import Console
+from ..commands import run
 
 
-class ObjectProxy(Generic[T]):
-    def __init__(self, create_function: Callable[[], T]) -> None:
-        self.__create_function = create_function
-
-    @cached_property
-    def actual_object(self) -> T:
-        return self.__create_function()
-
-    def __getattr__(self, name: str):
-        return self.actual_object.__getattribute__(name)
-
-
-untyped_console = ObjectProxy(create_function=rich.get_console)
-console = typing.cast(Console, untyped_console)  # increase startup performance
+def set_title(title: str) -> None:
+    echo_message = f"\\033]30;{title}\\007"
+    command = f'echo -ne "{echo_message}"'
+    run(command)

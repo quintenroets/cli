@@ -1,14 +1,11 @@
+from typing import Any
+
 try:
-    import readline
+    import readline  # noqa: F401
 
     # correctly handle arrow keys when asking user input
 except ModuleNotFoundError:
     pass  # not available on Windows
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from rich.prompt import Confirm, Prompt
 
 
 def ask(question: str) -> str:
@@ -16,13 +13,13 @@ def ask(question: str) -> str:
     return input().lower().strip()
 
 
-def prompt(*args, **kwargs) -> Prompt:
+def prompt(*args: Any, **kwargs: Any) -> str:
     from rich.prompt import Prompt
 
     return Prompt.ask(*args, **kwargs)
 
 
-def confirm(*args, **kwargs) -> Confirm:
+def confirm(*args: Any, **kwargs: Any) -> bool:
     from rich.prompt import Confirm
 
     return Confirm.ask(*args, **kwargs)
