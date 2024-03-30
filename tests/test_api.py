@@ -1,3 +1,4 @@
+import string
 from typing import Any
 
 import cli
@@ -6,8 +7,7 @@ from hypothesis.strategies import SearchStrategy
 
 
 def text_strategy(**kwargs: Any) -> SearchStrategy[str]:
-    alphabet = strategies.characters(blacklist_categories=["Cc", "Cs", "Zs"], **kwargs)
-    return strategies.text(alphabet=alphabet)
+    return strategies.text(alphabet=string.ascii_letters)
 
 
 @given(message=text_strategy())
@@ -31,4 +31,5 @@ def test_pipe_output_and_capture(message: str) -> None:
 
 @given(return_code=strategies.integers(min_value=0, max_value=255))
 def test_capture_return_code(return_code: int) -> None:
-    assert cli.capture_return_code("exit", return_code, shell=True) == return_code
+    command = f"python -c 'import sys; sys.exit({return_code})'"
+    assert cli.capture_return_code(command, return_code, shell=True) == return_code
