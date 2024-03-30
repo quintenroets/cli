@@ -41,7 +41,8 @@ def run_commands_in_shell(*commands: str, **kwargs: Any) -> None:
 
 def run_commands(*commands: str, shell: bool = False, **kwargs: Any) -> None:
     for command in commands:
-        Runner(tuple(command), shell=shell, kwargs=kwargs).run()
+        args = (command,)
+        Runner(args, shell=shell, kwargs=kwargs).run()
 
 
 def pipe_output_and_capture(

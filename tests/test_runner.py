@@ -57,3 +57,12 @@ def test_exception_handling() -> None:
 def test_command_not_found_exception_handling() -> None:
     with pytest.raises(FileNotFoundError):
         cli.run("non_existing_command")
+
+
+def test_command_and_argument_combination() -> None:
+    cli.run("ls -l", "-a")
+
+
+def test_run_commands() -> None:
+    commands = ("ls", "pwd")
+    cli.run_commands(*commands)
