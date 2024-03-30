@@ -18,7 +18,6 @@ T2 = TypeVar("T2")
 class Runner(Generic[T1]):
     items: tuple[CommandItem, ...]
     root: bool = False
-    wait: bool = True
     console: bool = False
     text: bool = True
     check: bool = True
@@ -38,9 +37,8 @@ class Runner(Generic[T1]):
 
     @cached_property
     def command_parts(self) -> tuple[str, ...]:
-        use_shell_command = self.shell or self.console
         command_preparer = CommandPreparer(
-            self.items, use_shell_command, self.console, self.root, self.title
+            self.items, self.shell, self.console, self.root, self.title
         )
         return command_preparer.run()
 
@@ -63,13 +61,6 @@ class Runner(Generic[T1]):
         else:
             child.interact()
 
-    def prepare_run(self) -> None:
-        if self.console:
-            self.prepare_console_command()
-        if not self.wait:
-            self.stdout = subprocess.DEVNULL
-            self.stderr = subprocess.DEVNULL
-
     def capture_output(self) -> str:
         self._capture_output = True
         return self.run().stdout.strip()
@@ -80,7 +71,7 @@ class Runner(Generic[T1]):
         return self.run().returncode
 
     def run(self) -> subprocess.CompletedProcess[T1]:
-        return self.start_run(self._run)
+        return self.run_with_exception_handling(self._run)
 
     def _run(self) -> subprocess.CompletedProcess[T1]:
         return subprocess.run(
@@ -94,8 +85,16 @@ class Runner(Generic[T1]):
             stderr=self.stderr,
         )
 
+    def run_in_console(self) -> subprocess.Popen[str]:
+        self.prepare_console_command()
+        return self.launch()
+
     def launch(self) -> subprocess.Popen[str]:
-        return self.start_run(self._launch)
+        if self.stdout is None:
+            self.stdout = subprocess.DEVNULL
+        if self.stderr is None:
+            self.stderr = subprocess.DEVNULL
+        return self.run_with_exception_handling(self._launch)
 
     def _launch(self) -> subprocess.Popen[str]:
         return subprocess.Popen(
@@ -106,21 +105,17 @@ class Runner(Generic[T1]):
             stderr=self.stderr,
         )
 
-    def start_run(self, runner: Callable[[], T2]) -> T2:
-        self.prepare_run()
+    def run_with_exception_handling(self, runner: Callable[[], T2]) -> T2:
         try:
             return runner()
         except subprocess.CalledProcessError as error:
-            raised_error = (
-                CalledProcessError(error.stderr or error)
-                if self.verbose_errors
-                else error
-            )
-            raise raised_error
+            verbose = self.verbose_errors
+            raise CalledProcessError(error.stderr or error) if verbose else error
 
     def prepare_console_command(self) -> None:
+        self.console = True
+        self.shell = True
         self.activate_console()
-        self.wait = False  # avoid blocking for console opening
         if "DISPLAY" not in os.environ:  # pragma: nocover
             # needed for non-login scripts to be able to activate console
             os.environ["DISPLAY"] = ":0.0"
