@@ -5,7 +5,6 @@ import typing
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from functools import cached_property
-from pathlib import Path
 from typing import Any, Generic, TypeVar
 
 from ..models import CalledProcessError
@@ -30,14 +29,17 @@ class Runner(Generic[T1]):
     input: str | None = None
     stdout: int | None = None
     stderr: int | None = None
-    cwd: Path | str | None = None
 
     verbose_errors: bool = True
     kwargs: dict[str, Any] = field(default_factory=dict)
+    subprocess_kwargs: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        for key, value in self.kwargs.items():
-            self.__setattr__(key, value)
+        for name, value in self.kwargs.items():
+            if hasattr(self, name):
+                self.__setattr__(name, value)
+            else:
+                self.subprocess_kwargs[name] = value
 
     @cached_property
     def command_parts(self) -> tuple[str, ...]:
@@ -90,7 +92,7 @@ class Runner(Generic[T1]):
             input=self.input,
             stdout=self.stdout,
             stderr=self.stderr,
-            cwd=self.cwd,
+            **self.subprocess_kwargs,
         )
 
     def run_in_console(self) -> subprocess.Popen[str]:
@@ -111,7 +113,7 @@ class Runner(Generic[T1]):
             shell=self.shell,
             stdout=self.stdout,
             stderr=self.stderr,
-            cwd=self.cwd,
+            **self.subprocess_kwargs,
         )
 
     def run_with_exception_handling(

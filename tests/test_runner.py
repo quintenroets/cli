@@ -73,3 +73,10 @@ def test_cwd() -> None:
     with Path.tempdir() as folder:
         extracted_folder_name = cli.capture_output("pwd", cwd=folder).split("/")[-1]
     assert extracted_folder_name == folder.name
+
+
+@given(value=text_strategy())
+@linux_only_test
+def test_extra_subprocess_kwarg(value: str) -> None:
+    env = {"name": value}
+    assert cli.capture_output("echo", "$name", shell=True, env=env) == value
