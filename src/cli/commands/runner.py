@@ -2,7 +2,7 @@ import io
 import os
 import subprocess
 import typing
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, Generic, TypeVar
@@ -16,7 +16,7 @@ T2 = TypeVar("T2")
 
 @dataclass
 class Runner(Generic[T1]):
-    items: tuple[CommandItem, ...]
+    items: Iterable[CommandItem]
     root: bool = False
     console: bool = False
     title: str | None = None
