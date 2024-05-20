@@ -18,7 +18,7 @@ CommandItem = StringLike | dict[str, StringLike] | set[StringLike] | list[String
 
 @dataclass
 class CommandPreparer:
-    items: tuple[CommandItem, ...]
+    items: Iterable[CommandItem]
     use_shell_command: bool = False
     use_console: bool = False
     use_root: bool = False

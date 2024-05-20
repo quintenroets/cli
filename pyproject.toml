@@ -1,6 +1,6 @@
 [project]
 name = "powercli"
-version = "0.3.0"
+version = "0.3.1"
 description = "High-level CLI interaction"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
