@@ -1,49 +1,41 @@
 [project]
-name = "powercli"
-version = "0.3.1"
-description = "High-level CLI interaction"
+name = "cli"
+version = "0.1.0"
+description = "Template for Python package published on PyPI"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "rich >=13.7.1, <14",
+    "package-utils[context] >=0.6.1, <1",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "hypothesis >=6.97.1, <7",
     "package-dev-tools >=0.5.11, <1",
     "package-dev-utils >=0.1.6, <1",
-    "superpathlib >=2.0.2, <3",
 ]
 
 [project.urls]
 "Source Code" = "https://github.com/quintenroets/cli"
 
 [project.scripts]
-konsolerun = "cli.cli:entry_point"
+cli = "cli.cli:entry_point"
 
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
-command_line = "-m pytest"
+command_line = "-m pytest tests"
 
 [tool.coverage.report]
 precision = 4
-fail_under = 75
+fail_under = 100
 
 [tool.mypy]
 strict = true
 no_implicit_reexport = false
-
-[[tool.mypy.overrides]]
-module = [
-    "pexpect.*",
-]
-ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 pythonpath = [
