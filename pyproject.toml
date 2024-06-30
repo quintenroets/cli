@@ -58,9 +58,9 @@ select = ["ALL"]
 ignore = [
     "ANN101",  # annotate self
     "ANN102",  # annotate cls
-    "ANN401",  # annotate with Any
+    "ANN401",  # annotated with Any
     "D", # docstrings
-    "S101", # assert use
+    "S101", # assert used
 ]
 
 [tool.ruff.lint.isort]
