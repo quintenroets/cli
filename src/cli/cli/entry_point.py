@@ -1,9 +1,6 @@
-import shlex
-import sys
+from package_utils.context.entry_point import create_entry_point
 
-import cli
+from cli import main
+from cli.context import context
 
-
-def entry_point() -> None:
-    command = shlex.join(sys.argv[1:])
-    cli.run_in_console(command)
+entry_point = create_entry_point(main, context)
