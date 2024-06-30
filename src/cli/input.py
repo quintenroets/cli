@@ -1,15 +1,14 @@
+import contextlib
 from typing import Any
 
-try:
+with contextlib.suppress(ModuleNotFoundError):  # not available on Windows
     import readline  # noqa: F401
 
     # correctly handle arrow keys when asking user input
-except ModuleNotFoundError:
-    pass  # not available on Windows
 
 
 def ask(question: str) -> str:
-    print(question, end=" ")
+    print(question, end=" ")  # noqa: T201
     return input().lower().strip()
 
 

@@ -12,7 +12,7 @@ def install(*packages: str, install_command: str | None = None) -> None:
         _install(*packages, install_command=install_command)
     else:
         message = "Required packages can only be installed on Linux"
-        warnings.warn(message)
+        warnings.warn(message, stacklevel=2)
 
 
 def _install(*packages: str, install_command: str | None = None) -> None:
