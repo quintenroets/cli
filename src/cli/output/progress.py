@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
 from dataclasses import dataclass
 from functools import cached_property
 from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from rich.progress import Progress
 
 
@@ -42,6 +43,7 @@ def track_progress(
     description: str = "",
     unit: str = "item",
     total: int | None = None,
+    *,
     cleanup_after_finish: bool = False,
     # cleanup_after_finish makes completed progressbar appear twice
 ) -> Iterable[T]:

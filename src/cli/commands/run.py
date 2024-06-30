@@ -36,7 +36,7 @@ def launch(*args: CommandItem, **kwargs: Any) -> subprocess.Popen[str]:
 
 
 def run_commands_in_shell(*commands: str, **kwargs: Any) -> None:
-    return run_commands(*commands, shell=True, **kwargs)
+    return run_commands(*commands, shell=True, **kwargs)  # noqa: S604
 
 
 def run_commands(*commands: str, **kwargs: Any) -> None:
@@ -52,7 +52,8 @@ def launch_commands(*commands: str, **kwargs: Any) -> None:
 
 
 def pipe_output_and_capture(
-    commands: Iterable[Iterable[Any]], **kwargs: Any
+    commands: Iterable[Iterable[Any]],
+    **kwargs: Any,
 ) -> str | None:
     output = None
     for args in commands:

@@ -1,3 +1,4 @@
+import contextlib
 import io
 import os
 import subprocess
@@ -7,7 +8,8 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, Generic, TypeVar
 
-from ..models import CalledProcessError
+from cli.models import CalledProcessError
+
 from .commands import CommandItem, CommandPreparer
 
 T1 = TypeVar("T1", bound=str)
@@ -45,7 +47,11 @@ class Runner(Generic[T1]):
     def command_parts(self) -> tuple[str, ...]:
         use_shell_command = self.shell or self.console
         command_preparer = CommandPreparer(
-            self.items, use_shell_command, self.console, self.root, self.title
+            self.items,
+            use_shell_command,
+            self.console,
+            self.root,
+            self.title,
         )
         return command_preparer.run()
 
@@ -76,18 +82,22 @@ class Runner(Generic[T1]):
         return self.run(capture_output=True).returncode
 
     def run(
-        self, capture_output: bool | None = None
+        self,
+        capture_output: bool | None = None,
     ) -> subprocess.CompletedProcess[T1]:
         if capture_output is None:
             capture_output = self.quiet
         return self.run_with_exception_handling(self._run, capture_output)
 
-    def _run(self, capture_output: bool) -> subprocess.CompletedProcess[T1]:
+    def _run(
+        self,
+        capture_output: bool,  # noqa: FBT001
+    ) -> subprocess.CompletedProcess[T1]:
         return subprocess.run(
             self.command_parts,
             text=self.text,
             check=self.check,
-            shell=self.shell,
+            shell=self.shell,  # noqa: S603
             capture_output=capture_output,
             input=self.input,
             stdout=self.stdout,
@@ -110,20 +120,24 @@ class Runner(Generic[T1]):
         return subprocess.Popen(
             self.command_parts,
             text=self.text,
-            shell=self.shell,
+            shell=self.shell,  # noqa: S603
             stdout=self.stdout,
             stderr=self.stderr,
             **self.subprocess_kwargs,
         )
 
     def run_with_exception_handling(
-        self, runner: Callable[..., T2], *args: Any, **kwargs: Any
+        self,
+        runner: Callable[..., T2],
+        *args: Any,
+        **kwargs: Any,
     ) -> T2:
         try:
             return runner(*args, **kwargs)
-        except subprocess.CalledProcessError as error:
+        except subprocess.CalledProcessError as exception:
             verbose = self.verbose_errors
-            raise CalledProcessError(error.stderr or error) if verbose else error
+            verbose_exception = CalledProcessError(exception.stderr or exception)
+            raise verbose_exception from exception if verbose else exception
 
     def prepare_console_command(self) -> None:
         self.console = True
@@ -135,7 +149,5 @@ class Runner(Generic[T1]):
     @classmethod
     def activate_console(cls) -> None:
         args = ("activate_window Konsole",)
-        try:
+        with contextlib.suppress(FileNotFoundError):
             Runner(args, check=False).run()
-        except FileNotFoundError:  # pragma: nocover
-            pass

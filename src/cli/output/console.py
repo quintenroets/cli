@@ -1,4 +1,4 @@
-from ..commands import run
+from cli.commands import run
 
 
 def set_title(title: str) -> None:

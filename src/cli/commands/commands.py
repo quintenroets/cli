@@ -96,8 +96,8 @@ class CommandPreparer:
             else:
                 yield from self.extract_items_as_strings(item)
 
-    def extract_items_as_strings(self, item: CommandItem) -> Iterator[str]:
-        for item in self.extract_items(item):
+    def extract_items_as_strings(self, command_item: CommandItem) -> Iterator[str]:
+        for item in self.extract_items(command_item):
             yield str(item)
 
     @classmethod

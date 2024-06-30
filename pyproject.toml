@@ -1,6 +1,6 @@
 [project]
 name = "powercli"
-version = "0.3.1"
+version = "0.3.2"
 description = "High-level CLI interaction"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
@@ -54,12 +54,13 @@ pythonpath = [
 fix = true
 
 [tool.ruff.lint]
-select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "UP",  # pyupgrade
+select = ["ALL"]
+ignore = [
+    "ANN101",  # annotate self
+    "ANN102",  # annotate cls
+    "ANN401",  # annotated with Any
+    "D", # docstrings
+    "S101", # assert used
 ]
 
 [tool.ruff.lint.isort]

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import sys
-from typing import Any
 
 UP = "\x1b[1A"
 CLR = "\x1b[0K"
@@ -22,12 +21,11 @@ class Message:
     @property
     def message_length(self) -> int:
         width = os.get_terminal_size().columns
-        length = (
+        return (
             sum([((len(line) - 1) // width) + 1 for line in self._message.split("\n")])
             if self._message
             else 0
         )
-        return length
 
     @property
     def header(self) -> str:
@@ -46,11 +44,11 @@ class Message:
         if message is not None:
             self.show(message)
 
-    def __enter__(self) -> Message:
+    def __enter__(self) -> Message:  # noqa: PYI034
         message = self._message
         self._message = None
         self.message = message
         return self
 
-    def __exit__(self, *_: Any) -> None:
-        print(self.header, end="")
+    def __exit__(self, *_: object) -> None:
+        print(self.header, end="")  # noqa: T201
