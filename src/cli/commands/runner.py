@@ -97,7 +97,7 @@ class Runner(Generic[T1]):
             self.command_parts,
             text=self.text,
             check=self.check,
-            shell=self.shell,  # noqa: S603
+            shell=self.shell,
             capture_output=capture_output,
             input=self.input,
             stdout=self.stdout,
@@ -120,7 +120,7 @@ class Runner(Generic[T1]):
         return subprocess.Popen(
             self.command_parts,
             text=self.text,
-            shell=self.shell,  # noqa: S603
+            shell=self.shell,
             stdout=self.stdout,
             stderr=self.stderr,
             **self.subprocess_kwargs,
