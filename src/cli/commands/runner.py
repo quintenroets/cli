@@ -93,11 +93,11 @@ class Runner(Generic[T1]):
         self,
         capture_output: bool,  # noqa: FBT001
     ) -> subprocess.CompletedProcess[T1]:
-        return subprocess.run(
+        return subprocess.run(  # noqa: S603
             self.command_parts,
             text=self.text,
             check=self.check,
-            shell=self.shell,  # noqa: S603
+            shell=self.shell,
             capture_output=capture_output,
             input=self.input,
             stdout=self.stdout,
@@ -117,10 +117,10 @@ class Runner(Generic[T1]):
         return self.run_with_exception_handling(self._launch)
 
     def _launch(self) -> subprocess.Popen[str]:
-        return subprocess.Popen(
+        return subprocess.Popen(  # noqa: S603
             self.command_parts,
             text=self.text,
-            shell=self.shell,  # noqa: S603
+            shell=self.shell,
             stdout=self.stdout,
             stderr=self.stderr,
             **self.subprocess_kwargs,
