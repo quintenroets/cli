@@ -40,14 +40,18 @@ def test_pipe_output_and_capture(message: str) -> None:
 @given(return_code=strategies.integers(min_value=0, max_value=255))
 @linux_only_test
 def test_capture_return_code(return_code: int) -> None:
-    assert cli.capture_return_code("exit", return_code, shell=True) == return_code  # noqa: S604
+    assert (
+        cli.capture_return_code("exit", return_code, shell=True) == return_code
+    )  # noqa: S604
 
 
 @given(return_code=strategies.integers(min_value=0, max_value=255))
 @linux_only_test
 def test_completes_successfully(return_code: int) -> None:
     success = return_code == 0
-    assert cli.completes_successfully("exit", return_code, shell=True) == success  # noqa: S604
+    assert (
+        cli.completes_successfully("exit", return_code, shell=True) == success
+    )  # noqa: S604
 
 
 @linux_only_test
@@ -80,4 +84,6 @@ def test_cwd() -> None:
 @linux_only_test
 def test_extra_subprocess_kwarg(value: str) -> None:
     env = {"name": value}
-    assert cli.capture_output("echo", "$name", shell=True, env=env) == value  # noqa: S604
+    assert (
+        cli.capture_output("echo", "$name", shell=True, env=env) == value
+    )  # noqa: S604
