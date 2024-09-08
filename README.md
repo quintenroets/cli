@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 # PowerCLI
 [![PyPI version](https://badge.fury.io/py/powercli.svg)](https://badge.fury.io/py/powercli)
+=======
+# Cli
+[![PyPI version](https://badge.fury.io/py/cli.svg)](https://badge.fury.io/py/cli)
+![PyPI downloads](https://img.shields.io/pypi/dm/cli)
+>>>>>>> template
 ![Python version](https://img.shields.io/badge/python-3.10+-brightgreen)
 ![Operating system](https://img.shields.io/badge/os-linux%20%7c%20macOS%20%7c%20windows-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-82%25-brightgreen)
