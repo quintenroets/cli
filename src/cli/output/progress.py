@@ -5,7 +5,7 @@ from functools import cached_property
 from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Iterator
 
     from rich.progress import Progress
 
@@ -46,13 +46,18 @@ def track_progress(
     *,
     cleanup_after_finish: bool = False,
     # cleanup_after_finish makes completed progressbar appear twice
-) -> Iterable[T]:
+) -> Iterator[T]:
     progress = progress_manager.progress
     progress.__enter__()
 
     task_id = progress.add_task(description=description, unit=unit)
     progress_manager.number_of_active_progress_tracks += 1
-    yield from progress.track(sequence, total, task_id, description)
+    yield from progress.track(
+        sequence=sequence,
+        total=total,
+        task_id=task_id,
+        description=description,
+    )
     progress_manager.number_of_active_progress_tracks -= 1
     if cleanup_after_finish and progress_manager.number_of_active_progress_tracks == 0:
         progress.__exit__(None, None, None)
