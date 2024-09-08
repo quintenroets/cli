@@ -1,11 +1,12 @@
 import os
 import string
 
-import cli
 import pytest
 from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
 from superpathlib import Path
+
+import cli
 
 linux_only_test = pytest.mark.skipif(
     os.name != "posix",

@@ -1,7 +1,8 @@
 import contextlib
 
-from cli import cli
 from package_dev_utils.tests.args import cli_args
+
+from cli import cli
 
 
 @cli_args("ls")

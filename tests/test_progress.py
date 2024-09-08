@@ -1,8 +1,9 @@
 import time
 from collections.abc import Iterable
 
-import cli
 import pytest
+
+import cli
 
 SLEEP_INTERVAL = 0.01
 ITERATIONS = 200
@@ -11,12 +12,12 @@ ITERATIONS = 200
 # Best to inspect these tests manually
 
 
-@pytest.fixture()
+@pytest.fixture
 def sequence() -> range:
     return range(ITERATIONS)
 
 
-@pytest.fixture()
+@pytest.fixture
 def tracked_sequence(sequence: range) -> Iterable[int]:
     return cli.track_progress(sequence, description="counting", unit="items")
 
