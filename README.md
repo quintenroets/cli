@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # PowerCLI
 [![PyPI version](https://badge.fury.io/py/powercli.svg)](https://badge.fury.io/py/powercli)
 ![PyPI downloads](https://img.shields.io/pypi/dm/powercli)
