@@ -19,12 +19,7 @@ def sequence() -> range:
 
 @pytest.fixture
 def tracked_sequence(sequence: range) -> Iterable[int]:
-    return cli.track_progress(
-        sequence,
-        description="counting",
-        unit="items",
-        cleanup_after_finish=True,
-    )
+    return cli.track_progress(sequence, description="counting", unit="items")
 
 
 def sleep() -> None:
