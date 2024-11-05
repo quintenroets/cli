@@ -5,21 +5,10 @@ repos:
       - id: docformatter
         args: [--in-place, --make-summary-multi-line, --close-quotes-on-newline, --wrap-summaries, "88"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-<<<<<<< HEAD
-    rev: v0.6.4
-    hooks:
-      - id: ruff
-      - id: ruff-format
-=======
     rev: v0.7.2
     hooks:
       - id: ruff
       - id: ruff-format
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-      - id: black
->>>>>>> template
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
