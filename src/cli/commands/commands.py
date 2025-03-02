@@ -49,7 +49,16 @@ class CommandPreparer:
             if self.title is not None:
                 command = self.create_title_command() + command
             shell = os.getenv("SHELL") or "/bin/bash"
-            commands = ("konsole", "--new-tab", "-e", shell, "-c", command)
+            commands = (
+                "konsole",
+                "--new-tab",
+                "--workdir",
+                str(Path.cwd()),
+                "-e",
+                shell,
+                "-c",
+                command,
+            )
         else:
             commands = (command,)
         return commands
