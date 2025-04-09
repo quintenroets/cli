@@ -116,7 +116,7 @@ class CommandPreparer:
             isinstance(item, collection) for collection in collection_types
         )
         if is_collection:
-            yield from typing.cast(Iterable[StringLike], item)
+            yield from typing.cast("Iterable[StringLike]", item)
         elif isinstance(item, dict):
             for key, value in item.items():
                 yield f"--{key}"

@@ -59,7 +59,7 @@ class Runner(Generic[T1]):
         import tempfile
 
         with tempfile.TemporaryFile() as untyped_log_file:
-            log_file = typing.cast(io.TextIOWrapper, untyped_log_file)
+            log_file = typing.cast("io.TextIOWrapper", untyped_log_file)
             self.run_in_tty(log_file)
             log_file.seek(0)
             return log_file.read()
@@ -137,7 +137,9 @@ class Runner(Generic[T1]):
         except subprocess.CalledProcessError as exception:
             verbose = self.verbose_errors
             verbose_exception = CalledProcessError(exception.stderr or exception)
-            raise verbose_exception from exception if verbose else exception
+            if verbose:
+                raise verbose_exception from exception
+            raise
 
     def prepare_console_command(self) -> None:
         self.console = True
