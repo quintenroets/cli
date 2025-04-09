@@ -42,7 +42,7 @@ class CommandPreparer:
         commands: tuple[str, ...]
         if self.should_use_root(command):
             if not command.startswith(self.root_keyword):
-                command = f"{self.root_keyword } {command}"
+                command = f"{self.root_keyword} {command}"
             if self.askpass_is_available:
                 command = command.replace(self.root_keyword, f"{self.root_keyword} -A")
         if self.use_console:
@@ -116,7 +116,7 @@ class CommandPreparer:
             isinstance(item, collection) for collection in collection_types
         )
         if is_collection:
-            yield from typing.cast(Iterable[StringLike], item)
+            yield from typing.cast("Iterable[StringLike]", item)
         elif isinstance(item, dict):
             for key, value in item.items():
                 yield f"--{key}"

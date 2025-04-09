@@ -59,7 +59,7 @@ class Runner(Generic[T1]):
         import tempfile
 
         with tempfile.TemporaryFile() as untyped_log_file:
-            log_file = typing.cast(io.TextIOWrapper, untyped_log_file)
+            log_file = typing.cast("io.TextIOWrapper", untyped_log_file)
             self.run_in_tty(log_file)
             log_file.seek(0)
             return log_file.read()
