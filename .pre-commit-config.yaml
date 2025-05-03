@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 repos:
   - repo: https://github.com/PyCQA/docformatter
     rev: eb1df34
@@ -41,3 +42,5 @@ ci:
     autoupdate_commit_msg: 'pre-commit auto updates'
     autoupdate_schedule: quarterly
     skip: [mypy, run-tests, check-coverage]
+=======
+>>>>>>> template
