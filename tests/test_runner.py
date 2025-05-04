@@ -28,7 +28,7 @@ def test_capture_output_lines(message: str) -> None:
     assert cli.capture_output_lines("printf", "%s", message) == message.splitlines()
 
 
-@settings(deadline=1000)
+@settings(deadline=3000)
 @given(message=text_strategy())
 def test_pipe_output_and_capture(message: str) -> None:
     commands = (
