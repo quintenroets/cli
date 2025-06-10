@@ -86,3 +86,8 @@ def test_root_with_askpass_enabled() -> None:
 
 def test_root_in_shell() -> None:
     cli.run("ls", root=True, shell=True)  # noqa: S604
+
+
+@patch.object(CommandPreparer, "askpass_is_available", new=True)
+def test_root_in_shell_with_askpass_enabled() -> None:
+    cli.run("ls", root=True, shell=True)  # noqa: S604
