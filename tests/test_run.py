@@ -6,6 +6,7 @@ from hypothesis import given
 from superpathlib import Path
 
 import cli
+from cli.commands.commands import CommandPreparer
 from cli.output.console import set_title
 
 from .test_runner import linux_only_test, text_strategy
@@ -75,6 +76,11 @@ def test_sudo() -> None:
 
 
 def test_root() -> None:
+    cli.run("ls", root=True)
+
+
+@patch.object(CommandPreparer, "askpass_is_available", new=True)
+def test_root_with_askpass_enabled() -> None:
     cli.run("ls", root=True)
 
 
