@@ -3,7 +3,6 @@ from .commands import (
     capture_output_lines,
     capture_return_code,
     completes_successfully,
-    install,
     launch,
     launch_commands,
     open_urls,

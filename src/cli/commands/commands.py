@@ -1,19 +1,20 @@
 import os
 import shlex
-import types
 import typing
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Protocol
+from typing import Protocol, cast
 
 
 class StringLike(Protocol):
     def __str__(self) -> str: ...
 
 
-CommandItem = StringLike | dict[str, StringLike] | set[StringLike] | list[StringLike]
+CommandItem = (
+    StringLike | dict[str, StringLike] | Sequence[StringLike] | Iterator[StringLike]
+)
 
 
 @dataclass
@@ -75,7 +76,7 @@ class CommandPreparer:
         if os.name == "posix":
             should_use_root = self.use_root or self.root_keyword in first_command_part
         else:
-            should_use_root = False
+            should_use_root = False  # pragma: nocover
         return should_use_root
 
     def generate_command_parts(self) -> Iterator[str]:
@@ -111,7 +112,7 @@ class CommandPreparer:
 
     @classmethod
     def extract_items(cls, item: CommandItem) -> Iterator[StringLike]:
-        collection_types = list, tuple, types.GeneratorType
+        collection_types = list, tuple, Iterator
         is_collection = any(
             isinstance(item, collection) for collection in collection_types
         )
@@ -126,4 +127,4 @@ class CommandPreparer:
             for part in item:
                 yield f"--{part}"
         elif hasattr(item, "__str__"):
-            yield item
+            yield cast("str", item)

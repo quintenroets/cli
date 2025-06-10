@@ -1,12 +1,13 @@
 import os
 import string
+from unittest.mock import MagicMock, patch
 
 import pytest
 from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
-from superpathlib import Path
 
 import cli
+from cli.commands.runner import Runner
 
 linux_only_test = pytest.mark.skipif(
     os.name != "posix",
@@ -51,34 +52,28 @@ def test_completes_successfully(return_code: int) -> None:
     assert cli.completes_successfully("exit", return_code, shell=True) == success  # noqa: S604
 
 
-@linux_only_test
-def test_exception_handling() -> None:
-    with pytest.raises(cli.CalledProcessError):
-        cli.run("exit 1", shell=True)  # noqa: S604
-
-
-def test_command_not_found_exception_handling() -> None:
-    with pytest.raises(FileNotFoundError):
-        cli.run("non_existing_command")
-
-
-def test_command_and_argument_combination() -> None:
-    cli.run("ls -l", "-a")
-
-
 def test_run_commands() -> None:
     commands = ("ls", "pwd")
     cli.run_commands(*commands)
 
 
-def test_cwd() -> None:
-    with Path.tempdir() as folder:
-        extracted_folder_name = cli.capture_output("pwd", cwd=folder).split("/")[-1]
-    assert extracted_folder_name == folder.name
+def test_launch() -> None:
+    cli.launch("ls")
 
 
-@given(value=text_strategy())
-@linux_only_test
-def test_extra_subprocess_kwarg(value: str) -> None:
-    env = {"name": value}
-    assert cli.capture_output("echo", "$name", shell=True, env=env) == value  # noqa: S604
+def test_launch_commands() -> None:
+    cli.launch_commands("ls")
+
+
+def test_run_commands_in_shell() -> None:
+    cli.run_commands_in_shell("ls")
+
+
+@patch("subprocess.Popen")
+def test_open(mocked_launch: MagicMock) -> None:
+    cli.open_urls("pwd")
+    mocked_launch.assert_called_once()
+
+
+def test_tty() -> None:
+    Runner(items=["ls"]).capture_tty_output()

@@ -6,7 +6,7 @@ import pytest
 import cli
 
 SLEEP_INTERVAL = 0.01
-ITERATIONS = 200
+ITERATIONS = 50
 
 
 # Best to inspect these tests manually

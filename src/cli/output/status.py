@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from .rich import console
 
 if TYPE_CHECKING:
-    from rich.console import Status
+    from rich.console import Status  # pragma: nocover
 
 
 def status(*args: Any, **kwargs: Any) -> Status | contextlib.nullcontext[None]:
@@ -21,5 +21,5 @@ def is_running_in_notebook() -> bool:
     except NameError:
         in_notebook = False
     else:
-        in_notebook = True
+        in_notebook = True  # pragma: nocover
     return in_notebook
