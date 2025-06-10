@@ -1,6 +1,6 @@
 import os
 import string
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from hypothesis import given, settings, strategies
@@ -69,11 +69,13 @@ def test_run_commands_in_shell() -> None:
     cli.run_commands_in_shell("ls")
 
 
-@patch("subprocess.Popen")
-def test_open(mocked_launch: MagicMock) -> None:
-    cli.open_urls("pwd")
-    mocked_launch.assert_called_once()
+def test_open() -> None:
+    open_function = "os.startfile" if os.name == "nt" else "subprocess.Popen"
+    with patch(open_function) as mocked_open:
+        cli.open_urls("pwd")
+        mocked_open.assert_called_once()
 
 
 def test_tty() -> None:
-    Runner(items=["ls"]).capture_tty_output()
+    if os.name != "nt":  # not supported on Windows
+        Runner(items=["ls"]).capture_tty_output()
