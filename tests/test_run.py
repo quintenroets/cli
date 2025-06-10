@@ -46,17 +46,17 @@ def test_extra_subprocess_kwarg(value: str) -> None:
 
 
 def test_set_parsing() -> None:
-    commands = "ls", {"all"}
+    commands = "python", {"version"}
     cli.run(*commands)
 
 
 def test_iterator_parsing() -> None:
-    commands = ("ls", iter(["--all"]))
+    commands = ("python", iter(["--version"]))
     cli.run(*commands)
 
 
 def test_dict_parsing() -> None:
-    commands = "ls", {"directory": "."}
+    commands = "git", {"work-tree": "."}, "status"
     cli.run(*commands)
 
 
