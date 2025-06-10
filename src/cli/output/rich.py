@@ -7,7 +7,7 @@ import rich
 
 T = TypeVar("T")
 if TYPE_CHECKING:
-    from rich.console import Console
+    from rich.console import Console  # pragma: nocover
 
 
 class ObjectProxy(Generic[T]):

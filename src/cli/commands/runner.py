@@ -72,7 +72,7 @@ class Runner(Generic[T1]):
         if self.capture_output is not None:
             child.expect(pexpect.EOF)
         else:
-            child.interact()
+            child.interact()  # pragma: nocover
 
     def capture_output(self) -> str:
         return self.run(capture_output=True).stdout.strip()

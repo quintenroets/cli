@@ -1,4 +1,3 @@
-from .install import install
 from .open_ import open_urls
 from .run import (
     capture_output,

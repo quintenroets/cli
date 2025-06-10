@@ -40,7 +40,7 @@ class Message:
         return self._message
 
     @message.setter
-    def message(self, message: str) -> None:
+    def message(self, message: str | None) -> None:
         if message is not None:
             self.show(message)
 
