@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 def status(*args: Any, **kwargs: Any) -> Status | contextlib.nullcontext[None]:
-    console.clear_live()
     use_status = not is_running_in_notebook()
     return console.status(*args, **kwargs) if use_status else contextlib.nullcontext()
 
