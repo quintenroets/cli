@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -63,18 +64,16 @@ def test_dict_parsing() -> None:
 
 @patch("sys.platform", "linux")
 @patch("subprocess.run")
-def test_title_linux(mocked_popen: MagicMock, mocked_platform: MagicMock) -> None:
+def test_title_linux(mocked_popen: MagicMock) -> None:
     cli.run("ls", title="ls", console=True)
     mocked_popen.assert_called_once()
-    mocked_platform.assert_not_called()
 
 
 @patch("sys.platform", "darwin")
 @patch("subprocess.run")
-def test_console_mac(mocked_popen: MagicMock, mocked_platform: MagicMock) -> None:
+def test_console_mac(mocked_popen: MagicMock) -> None:
     cli.run("ls", title="ls", console=True)
     mocked_popen.assert_called_once()
-    mocked_platform.assert_not_called()
 
 
 def test_set_title() -> None:
