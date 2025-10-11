@@ -1,5 +1,6 @@
 import os
 import shlex
+import sys
 import typing
 from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
@@ -39,30 +40,32 @@ class CommandPreparer:
         return tuple(self.generate_command_parts())
 
     def prepare_shell_command(self) -> tuple[str, ...]:
+        return tuple(self.generate_shell_command_parts())
+
+    def generate_shell_command_parts(self) -> Iterator[str]:
         command = " ".join(self.generate_command_parts())
-        commands: tuple[str, ...]
         if self.should_use_root(command):
             if not command.startswith(self.root_keyword):
                 command = f"{self.root_keyword} {command}"
             if self.askpass_is_available:
                 command = command.replace(self.root_keyword, f"{self.root_keyword} -A")
         if self.use_console:
-            if self.title is not None:
-                command = self.create_title_command() + command
-            shell = os.getenv("SHELL") or "/bin/bash"
-            commands = (
-                "konsole",
-                "--new-tab",
-                "--workdir",
-                str(Path.cwd()),
-                "-e",
-                shell,
-                "-c",
-                command,
-            )
-        else:
-            commands = (command,)
-        return commands
+            if "DISPLAY" not in os.environ:  # pragma: nocover
+                # needed for non-login scripts to be able to activate console
+                os.environ["DISPLAY"] = ":0.0"
+            if sys.platform == "darwin":
+                yield from ("osascript", "-e")
+                command = f'tell application "Terminal" to do script "{command}"'
+            else:
+                yield from self.create_linux_console_command_parts()
+                if self.title is not None:
+                    command = self.create_title_command() + command
+        yield command
+
+    @classmethod
+    def create_linux_console_command_parts(cls) -> tuple[str, ...]:
+        shell = os.getenv("SHELL") or "/bin/bash"
+        return "konsole", "--new-tab", "--workdir", str(Path.cwd()), "-e", shell, "-c"
 
     def create_title_command(self) -> str:
         return f"echo -ne '\\033]30;{self.title}\\007'; "

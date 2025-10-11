@@ -11,7 +11,7 @@ def run(*args: CommandItem, **kwargs: Any) -> subprocess.CompletedProcess[str]:
 
 
 def run_in_console(*args: CommandItem, **kwargs: Any) -> subprocess.Popen[str]:
-    return Runner[str](args, kwargs=kwargs).run_in_console()
+    return Runner[str](args, kwargs=kwargs, console=True).launch()
 
 
 def capture_output_lines(*args: CommandItem, **kwargs: Any) -> list[str]:

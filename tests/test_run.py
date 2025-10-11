@@ -61,8 +61,16 @@ def test_dict_parsing() -> None:
     cli.run(*commands)
 
 
+@patch("sys.platform", "linux")
 @patch("subprocess.run")
-def test_title(mocked_popen: MagicMock) -> None:
+def test_title_linux(mocked_popen: MagicMock) -> None:
+    cli.run("ls", title="ls", console=True)
+    mocked_popen.assert_called_once()
+
+
+@patch("sys.platform", "darwin")
+@patch("subprocess.run")
+def test_console_mac(mocked_popen: MagicMock) -> None:
     cli.run("ls", title="ls", console=True)
     mocked_popen.assert_called_once()
 
