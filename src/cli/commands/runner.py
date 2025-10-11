@@ -1,6 +1,4 @@
-import contextlib
 import io
-import os
 import subprocess
 import typing
 from collections.abc import Callable, Iterable
@@ -105,10 +103,6 @@ class Runner(Generic[T1]):
             **self.subprocess_kwargs,
         )
 
-    def run_in_console(self) -> subprocess.Popen[str]:
-        self.prepare_console_command()
-        return self.launch()
-
     def launch(self) -> subprocess.Popen[str]:
         if self.stdout is None:
             self.stdout = subprocess.DEVNULL
@@ -139,16 +133,3 @@ class Runner(Generic[T1]):
                 verbose_exception = CalledProcessError(exception.stderr or exception)
                 raise verbose_exception from exception
             raise
-
-    def prepare_console_command(self) -> None:
-        self.console = True
-        self.activate_console()
-        if "DISPLAY" not in os.environ:  # pragma: nocover
-            # needed for non-login scripts to be able to activate console
-            os.environ["DISPLAY"] = ":0.0"
-
-    @classmethod
-    def activate_console(cls) -> None:
-        args = ("activate_window Konsole",)
-        with contextlib.suppress(FileNotFoundError):
-            Runner(args, check=False).run()
