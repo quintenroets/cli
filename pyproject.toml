@@ -13,7 +13,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+<<<<<<< HEAD
     "hypothesis >=6.97.1, <7",
+=======
+>>>>>>> template
     "package-dev-tools >=0.7.1, <1",
     "package-dev-utils >=0.1.6, <1",
     "superpathlib >=2.0.2, <3",
