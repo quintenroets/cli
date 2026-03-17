@@ -19,7 +19,12 @@ class ProgressManager:
 
     @cached_property
     def progress(self) -> Progress:
-        from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
+        from rich.progress import (  # noqa: PLC0415
+            BarColumn,
+            Progress,
+            TextColumn,
+            TimeRemainingColumn,
+        )
 
         column_message = (
             "[progress.completed]{task.completed}/[progress.total]"
