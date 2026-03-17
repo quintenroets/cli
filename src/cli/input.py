@@ -13,12 +13,12 @@ def ask(question: str) -> str:
 
 
 def prompt(*args: Any, **kwargs: Any) -> str:
-    from rich.prompt import Prompt
+    from rich.prompt import Prompt  # noqa: PLC0415
 
     return Prompt.ask(*args, **kwargs)
 
 
 def confirm(*args: Any, **kwargs: Any) -> bool:
-    from rich.prompt import Confirm
+    from rich.prompt import Confirm  # noqa: PLC0415
 
     return Confirm.ask(*args, **kwargs)

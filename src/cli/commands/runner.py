@@ -54,7 +54,7 @@ class Runner(Generic[T1]):
         return command_preparer.run()
 
     def capture_tty_output(self) -> str:
-        import tempfile
+        import tempfile  # noqa: PLC0415
 
         with tempfile.TemporaryFile() as untyped_log_file:
             log_file = typing.cast("io.TextIOWrapper", untyped_log_file)
@@ -63,7 +63,7 @@ class Runner(Generic[T1]):
             return log_file.read()
 
     def run_in_tty(self, log_file: io.TextIOWrapper) -> None:
-        import pexpect
+        import pexpect  # noqa: PLC0415
 
         command, *args = self.command_parts
         child = pexpect.spawn(command, args, timeout=None, logfile=log_file)
@@ -81,6 +81,7 @@ class Runner(Generic[T1]):
 
     def run(
         self,
+        *,
         capture_output: bool | None = None,
     ) -> subprocess.CompletedProcess[T1]:
         if capture_output is None:
