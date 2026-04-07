@@ -7,13 +7,21 @@ license = "MIT"
 readme = "README.md"
 requires-python = ">=3.10, <3.14"
 dependencies = [
+<<<<<<< HEAD
     "pexpect >=4.9.0, <5",
     "rich >=14.0.1, <15",
+=======
+    "package-utils[context] >=0.8.3, <1",
+    "powercli >=0.3.7, <1",
+>>>>>>> template
 ]
 
 [project.optional-dependencies]
 dev = [
+<<<<<<< HEAD
     "hypothesis >=6.97.1, <7",
+=======
+>>>>>>> template
     "package-dev-tools >=0.8.0, <1",
     "package-dev-utils >=0.1.6, <1",
     "superpathlib >=2.0.2, <3",
@@ -57,10 +65,22 @@ fix = true
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
+<<<<<<< HEAD
     "ANN401",  # annotated with Any
     "D",       # docstrings
     "G004",    # logging f-string
     "S101",    # assert used
+=======
+    "ANN401",   # annotated with Any
+    "D",        # docstrings
+    "G004",     # logging f-string
+    "D1",       # missing docstrings
+    "D200",     # one-line docstring
+    "D203",     # conflicts with D211
+    "D205",     # blank line between summary and description
+    "D212",     # conflicts with D213
+    "D401",     # imperative first line
+>>>>>>> template
 ]
 
 [tool.ruff.lint.per-file-ignores]
