@@ -1,11 +1,11 @@
 [project]
 name = "powercli"
-version = "0.3.7"
+version = "0.3.8"
 description = "High-level CLI interaction"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10, <3.14"
+requires-python = ">=3.10"
 dependencies = [
     "pexpect >=4.9.0, <5",
     "rich >=14.0.1, <15",
@@ -58,7 +58,13 @@ fix = true
 select = ["ALL"]
 ignore = [
     "ANN401",  # annotated with Any
-    "D",       # docstrings
+    "D",        # docstrings
+    "D1",       # missing docstrings
+    "D200",     # one-line docstring
+    "D203",     # conflicts with D211
+    "D205",     # blank line between summary and description
+    "D212",     # conflicts with D213
+    "D401",     # imperative first line
     "G004",    # logging f-string
     "S101",    # assert used
 ]
