@@ -1,8 +1,8 @@
 import os
+import platform
 
 from .commands import StringLike
 from .run import launch
-import platform
 
 
 def open_urls(*urls: StringLike) -> None:
