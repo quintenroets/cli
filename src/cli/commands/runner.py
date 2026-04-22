@@ -18,7 +18,7 @@ T2 = TypeVar("T2")
 class Runner(Generic[T1]):
     items: Iterable[CommandItem]
     root: bool = False
-    console: bool = False
+    new_tab: bool = False
     title: str | None = None
     quiet: bool = False
 
@@ -43,11 +43,11 @@ class Runner(Generic[T1]):
 
     @cached_property
     def command_parts(self) -> tuple[str, ...]:
-        use_shell_command = self.shell or self.console
+        use_shell_command = self.shell or self.new_tab
         command_preparer = CommandPreparer(
             self.items,
             use_shell_command,
-            self.console,
+            self.new_tab,
             self.root,
             self.title,
         )

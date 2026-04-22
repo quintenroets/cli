@@ -10,8 +10,8 @@ def run(*args: CommandItem, **kwargs: Any) -> subprocess.CompletedProcess[str]:
     return Runner[str](args, kwargs=kwargs).run()
 
 
-def run_in_console(*args: CommandItem, **kwargs: Any) -> subprocess.Popen[str]:
-    return Runner[str](args, kwargs=kwargs, console=True).launch()
+def run_in_new_tab(*args: CommandItem, **kwargs: Any) -> subprocess.Popen[str]:
+    return Runner[str](args, kwargs=kwargs, new_tab=True).launch()
 
 
 def capture_output_lines(*args: CommandItem, **kwargs: Any) -> list[str]:

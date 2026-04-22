@@ -22,7 +22,7 @@ CommandItem = (
 class CommandPreparer:
     items: Iterable[CommandItem]
     use_shell_command: bool = False
-    use_console: bool = False
+    new_tab: bool = False
     use_root: bool = False
     title: str | None = None
     askpass_key: str = "SUDO_ASKPASS"
@@ -49,26 +49,22 @@ class CommandPreparer:
                 command = f"{self.root_keyword} {command}"
             if self.askpass_is_available:
                 command = command.replace(self.root_keyword, f"{self.root_keyword} -A")
-        if self.use_console:
-            if "DISPLAY" not in os.environ:  # pragma: nocover
-                # needed for non-login scripts to be able to activate console
-                os.environ["DISPLAY"] = ":0.0"
-            if sys.platform == "darwin":
-                yield from ("osascript", "-e")
-                command = f'tell application "Terminal" to do script "{command}"'
-            else:
-                yield from self.create_linux_console_command_parts()
-                if self.title is not None:
-                    command = self.create_title_command() + command
-        yield command
+        if self.new_tab:
+            yield from self.generate_new_tab_command_parts(command)
+        else:
+            yield command
 
-    @classmethod
-    def create_linux_console_command_parts(cls) -> tuple[str, ...]:
-        shell = os.getenv("SHELL") or "/bin/bash"
-        return "konsole", "--new-tab", "--workdir", str(Path.cwd()), "-e", shell, "-c"
-
-    def create_title_command(self) -> str:
-        return f"echo -ne '\\033]30;{self.title}\\007'; "
+    def generate_new_tab_command_parts(self, command: str) -> Iterator[str]:
+        cwd = str(Path.cwd())
+        if sys.platform == "darwin":
+            yield from ("osascript", "-e", create_mac_new_tab_script(command, cwd))
+        else:
+            os.environ.setdefault("DISPLAY", ":0.0")
+            shell = os.getenv("SHELL") or "/bin/bash"
+            yield from ("konsole", "--new-tab", "--workdir", cwd, "-e", shell, "-c")
+            if self.title is not None:
+                command = f"echo -ne '\\033]30;{self.title}\\007'; " + command
+            yield command
 
     @cached_property
     def askpass_is_available(self) -> bool:
@@ -131,3 +127,23 @@ class CommandPreparer:
                 yield f"--{part}"
         elif hasattr(item, "__str__"):
             yield cast("str", item)
+
+
+def create_mac_new_tab_script(command: str, cwd: str) -> str:
+    cwd = shlex.quote(cwd)
+    if os.getenv("TERM_PROGRAM") == "iTerm.app":
+        lines = (
+            'tell application "iTerm2"',
+            "  tell current window",
+            "    create tab with default profile",
+            "    tell current session of current tab",
+            f'      write text "cd {cwd}"',
+            f'      write text "{command}"',
+            "    end tell",
+            "  end tell",
+            "end tell",
+        )
+        script = "\n".join(lines)
+    else:
+        script = f'tell application "Terminal" to do script "cd {cwd} && {command}"'
+    return script
