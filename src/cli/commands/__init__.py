@@ -10,5 +10,5 @@ from .run import (
     run,
     run_commands,
     run_commands_in_shell,
-    run_in_console,
+    run_in_new_tab,
 )

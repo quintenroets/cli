@@ -8,7 +8,7 @@ from cli import cli
 
 @patch("subprocess.Popen")
 @cli_args("ls")
-def test_entry_point(mocked_popen: MagicMock) -> None:
+def test_run_in_new_tab(mocked_popen: MagicMock) -> None:
     with contextlib.suppress(FileNotFoundError):
-        cli.entry_point()
+        cli.run_in_new_tab()
     mocked_popen.assert_called_once()
