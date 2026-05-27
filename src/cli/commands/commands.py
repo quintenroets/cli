@@ -56,7 +56,9 @@ class CommandPreparer:
 
     def generate_new_tab_command_parts(self, command: str) -> Iterator[str]:
         cwd = str(Path.cwd())
-        if sys.platform == "darwin":
+        if running_in_cmux():
+            yield from self.generate_cmux_new_tab_command_parts(command, cwd)
+        elif sys.platform == "darwin":
             yield from ("osascript", "-e", create_mac_new_tab_script(command, cwd))
         else:
             os.environ.setdefault("DISPLAY", ":0.0")
@@ -65,6 +67,13 @@ class CommandPreparer:
             if self.title is not None:
                 command = f"echo -ne '\\033]30;{self.title}\\007'; " + command
             yield command
+
+    def generate_cmux_new_tab_command_parts(
+        self,
+        command: str,
+        cwd: str,
+    ) -> Iterator[str]:
+        yield from ("sh", "-c", create_cmux_new_tab_script(command, cwd, self.title))
 
     @cached_property
     def askpass_is_available(self) -> bool:
@@ -127,6 +136,22 @@ class CommandPreparer:
                 yield f"--{part}"
         elif hasattr(item, "__str__"):
             yield cast("str", item)
+
+
+def running_in_cmux() -> bool:
+    return bool(os.getenv("CMUX_TAB_ID"))
+
+
+def create_cmux_new_tab_script(command: str, cwd: str, title: str | None) -> str:
+    payload = shlex.quote(f"cd {shlex.quote(cwd)} && {command}\n")
+    create_surface = (
+        "surface=$(cmux --id-format uuids new-surface --type terminal --focus true"
+        " | awk '{print $2}')"
+    )
+    steps = [create_surface, f'cmux send --surface "$surface" {payload}']
+    if title is not None:
+        steps.append(f'cmux rename-tab --surface "$surface" {shlex.quote(title)}')
+    return " && ".join(steps)
 
 
 def create_mac_new_tab_script(command: str, cwd: str) -> str:
