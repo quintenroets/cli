@@ -57,7 +57,8 @@ class CommandPreparer:
     def generate_new_tab_command_parts(self, command: str) -> Iterator[str]:
         cwd = str(Path.cwd())
         if running_in_cmux():
-            yield from self.generate_cmux_new_tab_command_parts(command, cwd)
+            script = create_cmux_new_tab_script(command, cwd, self.title)
+            yield from ("sh", "-c", script)
         elif sys.platform == "darwin":
             yield from ("osascript", "-e", create_mac_new_tab_script(command, cwd))
         else:
@@ -67,13 +68,6 @@ class CommandPreparer:
             if self.title is not None:
                 command = f"echo -ne '\\033]30;{self.title}\\007'; " + command
             yield command
-
-    def generate_cmux_new_tab_command_parts(
-        self,
-        command: str,
-        cwd: str,
-    ) -> Iterator[str]:
-        yield from ("sh", "-c", create_cmux_new_tab_script(command, cwd, self.title))
 
     @cached_property
     def askpass_is_available(self) -> bool:
