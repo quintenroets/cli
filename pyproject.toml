@@ -58,7 +58,12 @@ fix = true
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
+<<<<<<< HEAD
     "ANN401",  # annotated with Any
+=======
+    "ANN401",   # annotated with Any
+    "CPY001",   # missing copyright notice
+>>>>>>> template
     "D",        # docstrings
     "D1",       # missing docstrings
     "D200",     # one-line docstring
