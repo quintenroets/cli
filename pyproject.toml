@@ -58,32 +58,16 @@ fix = true
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-<<<<<<< HEAD
-    "ANN401",  # annotated with Any
-=======
     "ANN401",   # annotated with Any
     "CPY001",   # missing copyright notice
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> template
-    "D",        # docstrings
-=======
-    "G004",     # logging f-string
->>>>>>> template
-=======
->>>>>>> template
     "D1",       # missing docstrings
     "D200",     # one-line docstring
     "D203",     # conflicts with D211
     "D205",     # blank line between summary and description
     "D212",     # conflicts with D213
     "D401",     # imperative first line
-<<<<<<< HEAD
-    "G004",    # logging f-string
-    "S101",    # assert used
-=======
     "G004",     # logging f-string
->>>>>>> template
+    "S101",     # assert used
 ]
 
 [tool.ruff.lint.per-file-ignores]
