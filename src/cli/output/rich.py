@@ -1,12 +1,12 @@
-import typing
-from collections.abc import Callable
-from functools import cached_property
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from __future__ import annotations
 
-import rich
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
 
 T = TypeVar("T")
 if TYPE_CHECKING:
+    from collections.abc import Callable  # pragma: nocover
+
     from rich.console import Console  # pragma: nocover
 
 
@@ -22,5 +22,11 @@ class ObjectProxy(Generic[T]):
         return self.actual_object.__getattribute__(name)
 
 
-untyped_console = ObjectProxy(create_function=rich.get_console)
-console = typing.cast("Console", untyped_console)  # increase startup performance
+def load_console() -> Console:
+    from rich import get_console  # noqa: PLC0415
+
+    return get_console()
+
+
+# the proxy keeps rich out of the import path until the console is used
+console = cast("Console", ObjectProxy(create_function=load_console))

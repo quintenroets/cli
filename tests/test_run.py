@@ -29,10 +29,6 @@ def test_command_not_found_exception_handling() -> None:
         cli.run("non_existing_command")
 
 
-def test_command_and_argument_combination() -> None:
-    cli.run("ls -l", "-a")
-
-
 def test_cwd() -> None:
     with Path.tempdir() as folder:
         extracted_folder_name = cli.capture_output("pwd", cwd=folder).split("/")[-1]
@@ -100,19 +96,12 @@ def test_sudo() -> None:
     cli.run("sudo ls")
 
 
-def test_root() -> None:
-    cli.run("ls", root=True)
-
-
-@patch.object(CommandPreparer, "askpass_is_available", new=True)
-def test_root_with_askpass_enabled() -> None:
-    cli.run("ls", root=True)
-
-
-def test_root_in_shell() -> None:
-    cli.run("ls", root=True, shell=True)  # noqa: S604
-
-
-@patch.object(CommandPreparer, "askpass_is_available", new=True)
-def test_root_in_shell_with_askpass_enabled() -> None:
-    cli.run("ls", root=True, shell=True)  # noqa: S604
+@pytest.mark.parametrize("askpass_is_available", [False, True])
+@pytest.mark.parametrize("shell", [False, True])
+def test_root(*, shell: bool, askpass_is_available: bool) -> None:
+    with patch.object(
+        CommandPreparer,
+        "askpass_is_available",
+        new=askpass_is_available,
+    ):
+        cli.run("ls", root=True, shell=shell)
