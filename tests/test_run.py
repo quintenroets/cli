@@ -13,14 +13,10 @@ from .test_runner import linux_only_test, text_strategy
 
 @linux_only_test
 def test_exception_handling() -> None:
-    with pytest.raises(cli.CalledProcessError):
-        cli.run("exit 1", shell=True)  # noqa: S604
-
-
-@linux_only_test
-def test_non_verbose_exception_handling() -> None:
-    with pytest.raises(subprocess.CalledProcessError):
-        cli.run("exit 1", shell=True, verbose_errors=False)  # noqa: S604
+    with pytest.raises(subprocess.CalledProcessError) as info:
+        cli.capture_output("echo error >&2; exit 1", shell=True)  # noqa: S604
+    assert info.value.returncode == 1
+    assert info.value.stderr == "error\n"
 
 
 def test_command_not_found_exception_handling() -> None:

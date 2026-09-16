@@ -13,5 +13,4 @@ from .commands import (
     run_in_new_tab,
 )
 from .input import ask, confirm, prompt
-from .models import CalledProcessError
 from .output import console, status, track_progress

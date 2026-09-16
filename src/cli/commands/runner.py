@@ -1,17 +1,14 @@
 import io
 import subprocess
 import typing
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, Generic, TypeVar
 
-from cli.models import CalledProcessError
-
 from .commands import CommandItem, CommandPreparer
 
 T1 = TypeVar("T1", bound=str)
-T2 = TypeVar("T2")
 
 
 @dataclass
@@ -30,7 +27,6 @@ class Runner(Generic[T1]):
     stdout: int | None = None
     stderr: int | None = None
 
-    verbose_errors: bool = True
     kwargs: dict[str, Any] = field(default_factory=dict)
     subprocess_kwargs: dict[str, Any] = field(default_factory=dict)
 
@@ -86,12 +82,6 @@ class Runner(Generic[T1]):
     ) -> subprocess.CompletedProcess[T1]:
         if capture_output is None:
             capture_output = self.quiet
-        return self.run_with_exception_handling(self._run, capture_output)
-
-    def _run(
-        self,
-        capture_output: bool,  # noqa: FBT001
-    ) -> subprocess.CompletedProcess[T1]:
         return subprocess.run(  # noqa: S603
             self.command_parts,
             text=self.text,
@@ -109,9 +99,6 @@ class Runner(Generic[T1]):
             self.stdout = subprocess.DEVNULL
         if self.stderr is None:
             self.stderr = subprocess.DEVNULL
-        return self.run_with_exception_handling(self._launch)
-
-    def _launch(self) -> subprocess.Popen[str]:
         return subprocess.Popen(  # noqa: S603
             self.command_parts,
             text=self.text,
@@ -120,17 +107,3 @@ class Runner(Generic[T1]):
             stderr=self.stderr,
             **self.subprocess_kwargs,
         )
-
-    def run_with_exception_handling(
-        self,
-        runner: Callable[..., T2],
-        *args: Any,
-        **kwargs: Any,
-    ) -> T2:
-        try:
-            return runner(*args, **kwargs)
-        except subprocess.CalledProcessError as exception:
-            if self.verbose_errors:
-                verbose_exception = CalledProcessError(exception.stderr or exception)
-                raise verbose_exception from exception
-            raise
