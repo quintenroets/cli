@@ -14,4 +14,4 @@ from .commands import (
 )
 from .input import ask, confirm, prompt
 from .models import CalledProcessError
-from .output import console, set_title, status, track_progress
+from .output import console, status, track_progress

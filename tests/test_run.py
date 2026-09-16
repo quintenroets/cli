@@ -7,7 +7,6 @@ from superpathlib import Path
 
 import cli
 from cli.commands.commands import CommandPreparer
-from cli.output.console import set_title
 
 from .test_runner import linux_only_test, text_strategy
 
@@ -86,10 +85,6 @@ def test_new_tab_mac_iterm(mocked_popen: MagicMock) -> None:
 def test_new_tab_cmux(mocked_popen: MagicMock) -> None:
     cli.run("ls", title="ls", new_tab=True)
     mocked_popen.assert_called_once()
-
-
-def test_set_title() -> None:
-    set_title(title="ls")
 
 
 def test_sudo() -> None:
