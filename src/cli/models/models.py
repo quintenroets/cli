@@ -1,2 +1,0 @@
-class CalledProcessError(Exception):
-    pass
