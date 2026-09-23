@@ -7,7 +7,6 @@ from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
 
 import cli
-from cli.commands.runner import Runner
 
 linux_only_test = pytest.mark.skipif(
     os.name != "posix",
@@ -74,8 +73,3 @@ def test_open() -> None:
     with patch(open_function) as mocked_open:
         cli.open_urls("pwd")
         mocked_open.assert_called_once()
-
-
-def test_tty() -> None:
-    if os.name != "nt":  # not supported on Windows
-        Runner(items=["ls"]).capture_tty_output()

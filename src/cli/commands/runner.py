@@ -1,6 +1,4 @@
-import io
 import subprocess
-import typing
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -48,25 +46,6 @@ class Runner(Generic[T1]):
             self.title,
         )
         return command_preparer.run()
-
-    def capture_tty_output(self) -> str:
-        import tempfile  # noqa: PLC0415
-
-        with tempfile.TemporaryFile() as untyped_log_file:
-            log_file = typing.cast("io.TextIOWrapper", untyped_log_file)
-            self.run_in_tty(log_file)
-            log_file.seek(0)
-            return log_file.read()
-
-    def run_in_tty(self, log_file: io.TextIOWrapper) -> None:
-        import pexpect  # noqa: PLC0415
-
-        command, *args = self.command_parts
-        child = pexpect.spawn(command, args, timeout=None, logfile=log_file)
-        if self.capture_output is not None:
-            child.expect(pexpect.EOF)
-        else:
-            child.interact()  # pragma: nocover
 
     def capture_output(self) -> str:
         return self.run(capture_output=True).stdout.strip()
