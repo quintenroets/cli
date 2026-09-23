@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from functools import cached_property
 from typing import TYPE_CHECKING, TypeVar
 
@@ -13,7 +12,6 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-@dataclass
 class ProgressManager:
     number_of_active_progress_tracks = 0
 
