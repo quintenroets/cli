@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import atexit
 from functools import cached_property
 from typing import TYPE_CHECKING, TypeVar
 
@@ -35,7 +36,9 @@ class ProgressManager:
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             TimeRemainingColumn(),
         ]
-        return Progress(*columns)
+        progress = Progress(*columns)
+        atexit.register(progress.stop)
+        return progress
 
 
 progress_manager = ProgressManager()
