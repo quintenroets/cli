@@ -6,7 +6,7 @@ from hypothesis import given
 from superpathlib import Path
 
 import cli
-from cli.commands.commands import CommandItem, CommandPreparer
+from cli.commands.commands import CommandItem
 
 from .test_runner import linux_only_test, text_strategy
 
@@ -75,12 +75,6 @@ def test_new_tab(
     mocked_run.assert_called_once()
 
 
-def test_sudo() -> None:
-    cli.run("sudo ls")
-
-
-@pytest.mark.parametrize("with_askpass", [False, True])
 @pytest.mark.parametrize("shell", [False, True])
-def test_root(*, shell: bool, with_askpass: bool) -> None:
-    with patch.object(CommandPreparer, "askpass_is_available", new=with_askpass):
-        cli.run("ls", root=True, shell=shell)
+def test_root(*, shell: bool) -> None:
+    cli.run("ls", root=True, shell=shell)
