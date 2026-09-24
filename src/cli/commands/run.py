@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Unpack
 
-from .commands import CommandItem, CommandPreparer
+from .commands import CommandItem, CommandPreparer, generate_new_tab_arguments
 from .options import LaunchOptions, RunOptions, extract_subprocess_options
 
 if TYPE_CHECKING:
@@ -52,14 +52,18 @@ def run(
     import subprocess  # noqa: PLC0415
 
     options = {"text": True, "check": True, **extract_subprocess_options(kwargs)}
-    return subprocess.run(prepare_command(args, kwargs), **options)  # noqa: PLW1510, S603
+    arguments = create_command_preparer(args, kwargs).create_arguments()
+    return subprocess.run(arguments, **options)  # noqa: PLW1510, S603
 
 
 def run_in_new_tab(
     *args: CommandItem,
+    title: str | None = None,
     **kwargs: Unpack[LaunchOptions],
 ) -> subprocess.Popen[str]:
-    return launch(*args, **(kwargs | {"new_tab": True}))
+    command = create_command_preparer(args, kwargs).create_command()
+    tab_arguments = tuple(generate_new_tab_arguments(command, title=title))
+    return open_process(tab_arguments, kwargs | {"shell": False})
 
 
 def launch_commands(*commands: str, **kwargs: Unpack[LaunchOptions]) -> None:
@@ -71,23 +75,27 @@ def launch(
     *args: CommandItem,
     **kwargs: Unpack[LaunchOptions],
 ) -> subprocess.Popen[str]:
+    arguments = create_command_preparer(args, kwargs).create_arguments()
+    return open_process(arguments, kwargs)
+
+
+def open_process(
+    arguments: tuple[str, ...],
+    options: LaunchOptions,
+) -> subprocess.Popen[str]:
     from subprocess import DEVNULL, Popen  # noqa: PLC0415
 
-    overrides = extract_subprocess_options(kwargs)
-    options = {"text": True, "stdout": DEVNULL, "stderr": DEVNULL, **overrides}
-    return Popen(prepare_command(args, kwargs), **options)  # noqa: S603
+    overrides = extract_subprocess_options(options)
+    popen_options = {"text": True, "stdout": DEVNULL, "stderr": DEVNULL, **overrides}
+    return Popen(arguments, **popen_options)  # noqa: S603
 
 
-def prepare_command(
+def create_command_preparer(
     items: Iterable[CommandItem],
     options: LaunchOptions,
-) -> tuple[str, ...]:
-    new_tab = options.get("new_tab", False)
-    use_shell_command = options.get("shell", False) or new_tab
+) -> CommandPreparer:
     return CommandPreparer(
         items,
-        use_shell_command=use_shell_command,
-        new_tab=new_tab,
+        use_shell_command=options.get("shell", False),
         use_root=options.get("root", False),
-        title=options.get("title"),
-    ).run()
+    )

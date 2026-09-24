@@ -64,15 +64,15 @@ def test_parsing(
         ("linux", {"CMUX_TAB_ID": "tab-id"}),
     ],
 )
-@patch("subprocess.run")
+@patch("subprocess.Popen")
 def test_new_tab(
-    mocked_run: MagicMock,
+    mocked_popen: MagicMock,
     platform: str,
     environment: dict[str, str],
 ) -> None:
     with patch("sys.platform", platform), patch.dict("os.environ", environment):
-        cli.run("ls", title="ls", new_tab=True)
-    mocked_run.assert_called_once()
+        cli.run_in_new_tab("ls", title="ls")
+    mocked_popen.assert_called_once()
 
 
 @pytest.mark.parametrize("shell", [False, True])
