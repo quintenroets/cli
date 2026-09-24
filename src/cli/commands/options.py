@@ -7,13 +7,8 @@ if TYPE_CHECKING:
     from collections.abc import Mapping  # pragma: nocover
 
 
-class CommandOptions(TypedDict, total=False):
+class LaunchOptions(TypedDict, total=False):
     root: bool
-    new_tab: bool
-    title: str | None
-
-
-class LaunchOptions(CommandOptions, total=False):
     text: bool
     shell: bool
     stdout: int | None
@@ -29,5 +24,4 @@ class RunOptions(LaunchOptions, total=False):
 
 
 def extract_subprocess_options(options: Mapping[str, object]) -> dict[str, Any]:
-    keys = CommandOptions.__optional_keys__
-    return {key: value for key, value in options.items() if key not in keys}
+    return {key: value for key, value in options.items() if key != "root"}

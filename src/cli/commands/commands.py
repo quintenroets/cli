@@ -21,39 +21,18 @@ CommandItem = (
 class CommandPreparer:
     items: Iterable[CommandItem]
     use_shell_command: bool = False
-    new_tab: bool = False
     use_root: bool = False
-    title: str | None = None
 
-    def run(self) -> tuple[str, ...]:
-        parts = (
-            self.generate_shell_command_parts()
+    def create_arguments(self) -> tuple[str, ...]:
+        return (
+            (self.create_command(),)
             if self.use_shell_command
-            else self.generate_command_parts()
+            else tuple(self.generate_command_parts())
         )
-        return tuple(parts)
 
-    def generate_shell_command_parts(self) -> Iterator[str]:
-        command = " ".join(self.generate_command_parts())
-        if self.new_tab:
-            yield from self.generate_new_tab_command_parts(command)
-        else:
-            yield command
-
-    def generate_new_tab_command_parts(self, command: str) -> Iterator[str]:
-        cwd = str(Path.cwd())
-        if running_in_cmux():
-            script = create_cmux_new_tab_script(command, cwd, self.title)
-            yield from ("sh", "-c", script)
-        elif sys.platform == "darwin":
-            yield from ("osascript", "-e", create_mac_new_tab_script(command, cwd))
-        else:
-            os.environ.setdefault("DISPLAY", ":0.0")
-            shell = os.getenv("SHELL") or "/bin/bash"
-            yield from ("konsole", "--new-tab", "--workdir", cwd, "-e", shell, "-c")
-            if self.title is not None:
-                command = f"echo -ne '\\033]30;{self.title}\\007'; " + command
-            yield command
+    def create_command(self) -> str:
+        parts = self.generate_command_parts()
+        return " ".join(parts) if self.use_shell_command else shlex.join(parts)
 
     def generate_command_parts(self) -> Iterator[str]:
         if self.use_root and os.name == "posix":
@@ -88,6 +67,22 @@ class CommandPreparer:
                 yield f"--{part}"
         elif hasattr(item, "__str__"):
             yield cast("str", item)
+
+
+def generate_new_tab_arguments(command: str, *, title: str | None) -> Iterator[str]:
+    cwd = str(Path.cwd())
+    if running_in_cmux():
+        script = create_cmux_new_tab_script(command, cwd, title)
+        yield from ("sh", "-c", script)
+    elif sys.platform == "darwin":
+        yield from ("osascript", "-e", create_mac_new_tab_script(command, cwd))
+    else:
+        os.environ.setdefault("DISPLAY", ":0.0")
+        shell = os.getenv("SHELL") or "/bin/bash"
+        yield from ("konsole", "--new-tab", "--workdir", cwd, "-e", shell, "-c")
+        if title is not None:
+            command = f"echo -ne '\\033]30;{title}\\007'; " + command
+        yield command
 
 
 def running_in_cmux() -> bool:
