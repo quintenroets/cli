@@ -6,7 +6,7 @@ from hypothesis import given
 from superpathlib import Path
 
 import cli
-from cli.commands.commands import CommandPreparer
+from cli.commands.commands import CommandItem, CommandPreparer
 
 from .test_runner import linux_only_test, text_strategy
 
@@ -37,50 +37,42 @@ def test_extra_subprocess_kwarg(value: str) -> None:
     assert cli.capture_output("echo", "$name", shell=True, env=env) == value  # noqa: S604
 
 
-def test_set_parsing() -> None:
-    commands = "python", {"version"}
-    cli.run(*commands)
-
-
-def test_iterator_parsing() -> None:
-    commands = ("python", iter(["--version"]))
-    cli.run(*commands)
-
-
-def test_dict_parsing() -> None:
-    commands = "git", {"work-tree": "."}, "status"
-    cli.run(*commands)
-
-
-@patch("sys.platform", "linux")
-@patch.dict("os.environ", {"CMUX_TAB_ID": ""})
+@pytest.mark.parametrize(
+    ("items", "expected"),
+    [
+        (("python", {"version"}), ("python", "--version")),
+        (("python", iter(["--version"])), ("python", "--version")),
+        (("git", {"work-tree": "."}, "status"), ("git", "--work-tree", ".", "status")),
+    ],
+)
 @patch("subprocess.run")
-def test_title_linux(mocked_popen: MagicMock) -> None:
-    cli.run("ls", title="ls", new_tab=True)
-    mocked_popen.assert_called_once()
+def test_parsing(
+    mocked_run: MagicMock,
+    items: tuple[CommandItem, ...],
+    expected: tuple[str, ...],
+) -> None:
+    cli.run(*items)
+    assert mocked_run.call_args.args[0] == expected
 
 
-@patch("sys.platform", "darwin")
-@patch.dict("os.environ", {"CMUX_TAB_ID": ""})
+@pytest.mark.parametrize(
+    ("platform", "environment"),
+    [
+        ("darwin", {"CMUX_TAB_ID": "", "TERM_PROGRAM": ""}),
+        ("darwin", {"CMUX_TAB_ID": "", "TERM_PROGRAM": "iTerm.app"}),
+        ("linux", {"CMUX_TAB_ID": ""}),
+        ("linux", {"CMUX_TAB_ID": "tab-id"}),
+    ],
+)
 @patch("subprocess.run")
-def test_new_tab_mac(mocked_popen: MagicMock) -> None:
-    cli.run("ls", title="ls", new_tab=True)
-    mocked_popen.assert_called_once()
-
-
-@patch("sys.platform", "darwin")
-@patch.dict("os.environ", {"CMUX_TAB_ID": "", "TERM_PROGRAM": "iTerm.app"})
-@patch("subprocess.run")
-def test_new_tab_mac_iterm(mocked_popen: MagicMock) -> None:
-    cli.run("ls", new_tab=True)
-    mocked_popen.assert_called_once()
-
-
-@patch.dict("os.environ", {"CMUX_TAB_ID": "tab-id"})
-@patch("subprocess.run")
-def test_new_tab_cmux(mocked_popen: MagicMock) -> None:
-    cli.run("ls", title="ls", new_tab=True)
-    mocked_popen.assert_called_once()
+def test_new_tab(
+    mocked_run: MagicMock,
+    platform: str,
+    environment: dict[str, str],
+) -> None:
+    with patch("sys.platform", platform), patch.dict("os.environ", environment):
+        cli.run("ls", title="ls", new_tab=True)
+    mocked_run.assert_called_once()
 
 
 def test_sudo() -> None:
