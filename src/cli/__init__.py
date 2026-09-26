@@ -10,7 +10,6 @@ from .commands import (
     run,
     run_commands,
     run_commands_in_shell,
-    run_in_new_tab,
 )
 from .input import ask, confirm, prompt
 from .output import console, status, track_progress

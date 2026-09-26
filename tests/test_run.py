@@ -55,26 +55,6 @@ def test_parsing(
     assert mocked_run.call_args.args[0] == expected
 
 
-@pytest.mark.parametrize(
-    ("platform", "environment"),
-    [
-        ("darwin", {"CMUX_TAB_ID": "", "TERM_PROGRAM": ""}),
-        ("darwin", {"CMUX_TAB_ID": "", "TERM_PROGRAM": "iTerm.app"}),
-        ("linux", {"CMUX_TAB_ID": ""}),
-        ("linux", {"CMUX_TAB_ID": "tab-id"}),
-    ],
-)
-@patch("subprocess.Popen")
-def test_new_tab(
-    mocked_popen: MagicMock,
-    platform: str,
-    environment: dict[str, str],
-) -> None:
-    with patch("sys.platform", platform), patch.dict("os.environ", environment):
-        cli.run_in_new_tab("ls", title="ls")
-    mocked_popen.assert_called_once()
-
-
 @pytest.mark.parametrize("shell", [False, True])
 def test_root(*, shell: bool) -> None:
     cli.run("ls", root=True, shell=shell)

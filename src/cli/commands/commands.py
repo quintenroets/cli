@@ -1,10 +1,8 @@
 import os
 import shlex
-import sys
 import typing
 from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Protocol, cast
 
 
@@ -67,55 +65,3 @@ class CommandPreparer:
                 yield f"--{part}"
         elif hasattr(item, "__str__"):
             yield cast("str", item)
-
-
-def generate_new_tab_arguments(command: str, *, title: str | None) -> Iterator[str]:
-    cwd = str(Path.cwd())
-    if running_in_cmux():
-        script = create_cmux_new_tab_script(command, cwd, title)
-        yield from ("sh", "-c", script)
-    elif sys.platform == "darwin":
-        yield from ("osascript", "-e", create_mac_new_tab_script(command, cwd))
-    else:
-        os.environ.setdefault("DISPLAY", ":0.0")
-        shell = os.getenv("SHELL") or "/bin/bash"
-        yield from ("konsole", "--new-tab", "--workdir", cwd, "-e", shell, "-c")
-        if title is not None:
-            command = f"echo -ne '\\033]30;{title}\\007'; " + command
-        yield command
-
-
-def running_in_cmux() -> bool:
-    return bool(os.getenv("CMUX_TAB_ID"))
-
-
-def create_cmux_new_tab_script(command: str, cwd: str, title: str | None) -> str:
-    payload = shlex.quote(f"cd {shlex.quote(cwd)} && {command}\n")
-    create_surface = (
-        "surface=$(cmux --id-format uuids new-surface --type terminal --focus true"
-        " | awk '{print $2}')"
-    )
-    steps = [create_surface, f'cmux send --surface "$surface" {payload}']
-    if title is not None:
-        steps.append(f'cmux rename-tab --surface "$surface" {shlex.quote(title)}')
-    return " && ".join(steps)
-
-
-def create_mac_new_tab_script(command: str, cwd: str) -> str:
-    cwd = shlex.quote(cwd)
-    if os.getenv("TERM_PROGRAM") == "iTerm.app":
-        lines = (
-            'tell application "iTerm2"',
-            "  tell current window",
-            "    create tab with default profile",
-            "    tell current session of current tab",
-            f'      write text "cd {cwd}"',
-            f'      write text "{command}"',
-            "    end tell",
-            "  end tell",
-            "end tell",
-        )
-        script = "\n".join(lines)
-    else:
-        script = f'tell application "Terminal" to do script "cd {cwd} && {command}"'
-    return script

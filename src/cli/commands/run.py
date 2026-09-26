@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Unpack
 
-from .commands import CommandItem, CommandPreparer, generate_new_tab_arguments
+from .commands import CommandItem, CommandPreparer
 from .options import LaunchOptions, RunOptions, extract_subprocess_options
 
 if TYPE_CHECKING:
@@ -54,16 +54,6 @@ def run(
     options = {"text": True, "check": True, **extract_subprocess_options(kwargs)}
     arguments = create_command_preparer(args, kwargs).create_arguments()
     return subprocess.run(arguments, **options)  # noqa: PLW1510, S603
-
-
-def run_in_new_tab(
-    *args: CommandItem,
-    title: str | None = None,
-    **kwargs: Unpack[LaunchOptions],
-) -> subprocess.Popen[str]:
-    command = create_command_preparer(args, kwargs).create_command()
-    tab_arguments = tuple(generate_new_tab_arguments(command, title=title))
-    return open_process(tab_arguments, kwargs | {"shell": False})
 
 
 def launch_commands(*commands: str, **kwargs: Unpack[LaunchOptions]) -> None:
