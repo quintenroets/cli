@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import os
+import sys
 from typing import TYPE_CHECKING, Any, Unpack
 
-from .commands import CommandItem, CommandPreparer
+from .commands import CommandItem, CommandPreparer, StringLike
 from .options import LaunchOptions, RunOptions, extract_subprocess_options
 
 if TYPE_CHECKING:
@@ -58,6 +60,15 @@ def run(
 def launch_commands(*commands: str, **kwargs: Unpack[LaunchOptions]) -> None:
     for command in commands:
         launch(command, **kwargs)
+
+
+def open_urls(*urls: StringLike) -> None:
+    for url in urls:
+        if os.name == "nt":
+            os.startfile(url)  # type: ignore[attr-defined] # noqa: S606 # pragma: nocover
+        else:
+            command = "xdg-open" if sys.platform == "linux" else "open"
+            launch(command, url)
 
 
 def launch(
