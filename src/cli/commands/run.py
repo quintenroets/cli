@@ -4,7 +4,7 @@ import os
 import sys
 from typing import TYPE_CHECKING, Any, Unpack
 
-from .commands import CommandItem, CommandPreparer, StringLike
+from .commands import CommandPreparer
 from .options import LaunchOptions, RunOptions, extract_subprocess_options
 
 if TYPE_CHECKING:
@@ -22,19 +22,19 @@ def pipe_output_and_capture(
     return output
 
 
-def capture_output_lines(*args: CommandItem, **kwargs: Unpack[RunOptions]) -> list[str]:
+def capture_output_lines(*args: object, **kwargs: Unpack[RunOptions]) -> list[str]:
     return [line for line in capture_output(*args, **kwargs).splitlines() if line]
 
 
-def capture_output(*args: CommandItem, **kwargs: Unpack[RunOptions]) -> str:
+def capture_output(*args: object, **kwargs: Unpack[RunOptions]) -> str:
     return run(*args, **(kwargs | {"capture_output": True})).stdout.strip()
 
 
-def completes_successfully(*args: CommandItem, **kwargs: Unpack[RunOptions]) -> bool:
+def completes_successfully(*args: object, **kwargs: Unpack[RunOptions]) -> bool:
     return capture_return_code(*args, **kwargs) == 0
 
 
-def capture_return_code(*args: CommandItem, **kwargs: Unpack[RunOptions]) -> int:
+def capture_return_code(*args: object, **kwargs: Unpack[RunOptions]) -> int:
     return run(*args, **(kwargs | {"capture_output": True, "check": False})).returncode
 
 
@@ -48,7 +48,7 @@ def run_commands(*commands: str, **kwargs: Unpack[RunOptions]) -> None:
 
 
 def run(
-    *args: CommandItem,
+    *args: object,
     **kwargs: Unpack[RunOptions],
 ) -> subprocess.CompletedProcess[str]:
     import subprocess  # noqa: PLC0415
@@ -62,7 +62,7 @@ def launch_commands(*commands: str, **kwargs: Unpack[LaunchOptions]) -> None:
         launch(command, **kwargs)
 
 
-def open_urls(*urls: StringLike) -> None:
+def open_urls(*urls: object) -> None:
     for url in urls:
         if os.name == "nt":
             os.startfile(url)  # type: ignore[attr-defined] # noqa: S606 # pragma: nocover
@@ -72,7 +72,7 @@ def open_urls(*urls: StringLike) -> None:
 
 
 def launch(
-    *args: CommandItem,
+    *args: object,
     **kwargs: Unpack[LaunchOptions],
 ) -> subprocess.Popen[str]:
     from subprocess import DEVNULL, Popen  # noqa: PLC0415
@@ -83,7 +83,7 @@ def launch(
 
 
 def create_arguments(
-    items: Iterable[CommandItem],
+    items: Iterable[object],
     options: LaunchOptions,
 ) -> tuple[str, ...]:
     return CommandPreparer(

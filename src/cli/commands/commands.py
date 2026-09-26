@@ -1,23 +1,13 @@
 import os
 import shlex
 import typing
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
-from typing import Protocol, cast
-
-
-class StringLike(Protocol):
-    def __str__(self) -> str: ...
-
-
-CommandItem = (
-    StringLike | dict[str, StringLike] | Sequence[StringLike] | Iterator[StringLike]
-)
 
 
 @dataclass
 class CommandPreparer:
-    items: Iterable[CommandItem]
+    items: Iterable[object]
     use_shell_command: bool = False
     use_root: bool = False
 
@@ -43,18 +33,18 @@ class CommandPreparer:
             else:
                 yield from self.extract_items_as_strings(item)
 
-    def extract_items_as_strings(self, command_item: CommandItem) -> Iterator[str]:
+    def extract_items_as_strings(self, command_item: object) -> Iterator[str]:
         for item in self.extract_items(command_item):
             yield str(item)
 
     @classmethod
-    def extract_items(cls, item: CommandItem) -> Iterator[StringLike]:
+    def extract_items(cls, item: object) -> Iterator[object]:
         collection_types = list, tuple, Iterator
         is_collection = any(
             isinstance(item, collection) for collection in collection_types
         )
         if is_collection:
-            yield from typing.cast("Iterable[StringLike]", item)
+            yield from typing.cast("Iterable[object]", item)
         elif isinstance(item, dict):
             for key, value in item.items():
                 yield f"--{key}"
@@ -64,4 +54,4 @@ class CommandPreparer:
             for part in item:
                 yield f"--{part}"
         elif hasattr(item, "__str__"):
-            yield cast("str", item)
+            yield item
