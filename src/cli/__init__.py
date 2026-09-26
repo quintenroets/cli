@@ -12,4 +12,4 @@ from .commands import (
     run_commands_in_shell,
 )
 from .input import ask, confirm, prompt
-from .output import console, status, track_progress
+from .output import console, track_progress
