@@ -53,8 +53,8 @@ def test_nested_progress(tracked_sequence: Iterable[int], sequence: range) -> No
 def test_progress_with_status(tracked_sequence: Iterable[int]) -> None:
     for _ in tracked_sequence:
         sleep()
-        with cli.status("waiting"):
+        with cli.console.status("waiting"):
             sleep()
 
-    with cli.status("waiting"):
+    with cli.console.status("waiting"):
         sleep()
