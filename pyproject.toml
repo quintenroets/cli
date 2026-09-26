@@ -21,9 +21,6 @@ dev = [
 [project.urls]
 "Source Code" = "https://github.com/quintenroets/cli"
 
-[project.scripts]
-run-in-new-tab = "cli.cli:run_in_new_tab"
-
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
