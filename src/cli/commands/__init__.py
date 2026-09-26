@@ -1,4 +1,3 @@
-from .open_ import open_urls
 from .run import (
     capture_output,
     capture_output_lines,
@@ -6,6 +5,7 @@ from .run import (
     completes_successfully,
     launch,
     launch_commands,
+    open_urls,
     pipe_output_and_capture,
     run,
     run_commands,
