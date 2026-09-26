@@ -6,7 +6,6 @@ from hypothesis import given
 from superpathlib import Path
 
 import cli
-from cli.commands.commands import CommandItem
 
 from .test_runner import linux_only_test, text_strategy
 
@@ -48,7 +47,7 @@ def test_extra_subprocess_kwarg(value: str) -> None:
 @patch("subprocess.run")
 def test_parsing(
     mocked_run: MagicMock,
-    items: tuple[CommandItem, ...],
+    items: tuple[object, ...],
     expected: tuple[str, ...],
 ) -> None:
     cli.run(*items)
