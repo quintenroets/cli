@@ -52,8 +52,7 @@ def run(
     import subprocess  # noqa: PLC0415
 
     options = {"text": True, "check": True, **extract_subprocess_options(kwargs)}
-    arguments = create_command_preparer(args, kwargs).create_arguments()
-    return subprocess.run(arguments, **options)  # noqa: PLW1510, S603
+    return subprocess.run(create_arguments(args, kwargs), **options)  # noqa: PLW1510, S603
 
 
 def launch_commands(*commands: str, **kwargs: Unpack[LaunchOptions]) -> None:
@@ -65,27 +64,19 @@ def launch(
     *args: CommandItem,
     **kwargs: Unpack[LaunchOptions],
 ) -> subprocess.Popen[str]:
-    arguments = create_command_preparer(args, kwargs).create_arguments()
-    return open_process(arguments, kwargs)
-
-
-def open_process(
-    arguments: tuple[str, ...],
-    options: LaunchOptions,
-) -> subprocess.Popen[str]:
     from subprocess import DEVNULL, Popen  # noqa: PLC0415
 
-    overrides = extract_subprocess_options(options)
-    popen_options = {"text": True, "stdout": DEVNULL, "stderr": DEVNULL, **overrides}
-    return Popen(arguments, **popen_options)  # noqa: S603
+    overrides = extract_subprocess_options(kwargs)
+    options = {"text": True, "stdout": DEVNULL, "stderr": DEVNULL, **overrides}
+    return Popen(create_arguments(args, kwargs), **options)  # noqa: S603
 
 
-def create_command_preparer(
+def create_arguments(
     items: Iterable[CommandItem],
     options: LaunchOptions,
-) -> CommandPreparer:
+) -> tuple[str, ...]:
     return CommandPreparer(
         items,
         use_shell_command=options.get("shell", False),
         use_root=options.get("root", False),
-    )
+    ).create_arguments()
