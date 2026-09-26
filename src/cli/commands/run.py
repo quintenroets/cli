@@ -2,14 +2,17 @@ from __future__ import annotations
 
 import os
 import sys
-from typing import TYPE_CHECKING, Any, Unpack
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
-from .commands import CommandPreparer
-from .options import LaunchOptions, RunOptions, extract_subprocess_options
+from .options import extract_subprocess_options
 
 if TYPE_CHECKING:
     import subprocess  # pragma: nocover
     from collections.abc import Iterable  # pragma: nocover
+    from typing import Any, Unpack  # pragma: nocover
+
+    from .options import LaunchOptions, RunOptions  # pragma: nocover
 
 
 def pipe_output_and_capture(
@@ -85,9 +88,28 @@ def launch(
 def create_arguments(
     items: Iterable[object],
     options: LaunchOptions,
-) -> tuple[str, ...]:
-    return CommandPreparer(
-        items,
-        use_shell_command=options.get("shell", False),
-        use_root=options.get("root", False),
-    ).create_arguments()
+) -> str | tuple[str, ...]:
+    arguments = expand_arguments(items, options)
+    return " ".join(arguments) if options.get("shell") else tuple(arguments)
+
+
+def expand_arguments(items: Iterable[object], options: LaunchOptions) -> Iterator[str]:
+    import shlex  # noqa: PLC0415
+
+    if options.get("root") and os.name == "posix":
+        yield "sudo"
+    for i, item in enumerate(items):
+        if i == 0 and isinstance(item, str) and not options.get("shell"):
+            yield from shlex.split(item)
+        elif isinstance(item, list | tuple | Iterator):
+            yield from map(str, item)
+        elif isinstance(item, dict):
+            for key, value in item.items():
+                yield f"--{key}"
+                if value is not None:
+                    yield str(value)
+        elif isinstance(item, set):
+            for part in item:
+                yield f"--{part}"
+        else:
+            yield str(item)
