@@ -5,14 +5,24 @@ import sys
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
-from .options import extract_subprocess_options
-
 if TYPE_CHECKING:
     import subprocess  # pragma: nocover
-    from collections.abc import Iterable  # pragma: nocover
-    from typing import Any, Unpack  # pragma: nocover
+    from collections.abc import Iterable, Mapping  # pragma: nocover
+    from typing import Any, TypedDict, Unpack  # pragma: nocover
 
-    from .options import LaunchOptions, RunOptions  # pragma: nocover
+    class LaunchOptions(TypedDict, total=False):  # pragma: nocover
+        root: bool
+        text: bool
+        shell: bool
+        stdout: int | None
+        stderr: int | None
+        cwd: str | os.PathLike[str]
+        env: Mapping[str, str]
+
+    class RunOptions(LaunchOptions, total=False):  # pragma: nocover
+        check: bool
+        input: str | None
+        capture_output: bool
 
 
 def pipe_output_and_capture(
@@ -113,3 +123,7 @@ def expand_arguments(items: Iterable[object], options: LaunchOptions) -> Iterato
                 yield f"--{part}"
         else:
             yield str(item)
+
+
+def extract_subprocess_options(options: Mapping[str, object]) -> dict[str, Any]:
+    return {key: value for key, value in options.items() if key != "root"}
