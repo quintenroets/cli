@@ -14,8 +14,6 @@ T = TypeVar("T")
 
 
 class ProgressManager:
-    number_of_active_progress_tracks = 0
-
     @cached_property
     def progress(self) -> Progress:
         from rich.progress import (  # noqa: PLC0415
@@ -49,21 +47,15 @@ def track_progress(
     description: str = "",
     unit: str = "item",
     total: int | None = None,
-    *,
-    cleanup_after_finish: bool = False,
-    # cleanup_after_finish makes completed progressbar appear twice
 ) -> Iterator[T]:
     progress = progress_manager.progress
-    progress.__enter__()
-
+    progress.start()
     task_id = progress.add_task(description=description, unit=unit)
-    progress_manager.number_of_active_progress_tracks += 1
-    yield from progress.track(
-        sequence=sequence,
-        total=total,
-        task_id=task_id,
-        description=description,
-    )
-    progress_manager.number_of_active_progress_tracks -= 1
-    if cleanup_after_finish and progress_manager.number_of_active_progress_tracks == 0:
-        progress.__exit__(None, None, None)
+    try:
+        yield from progress.track(sequence, total=total, task_id=task_id)
+    finally:
+        progress.stop_task(task_id)
+        if all(task.stop_time is not None for task in progress.tasks):
+            progress.stop()
+            for task in progress.tasks:
+                progress.remove_task(task.id)

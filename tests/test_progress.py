@@ -31,17 +31,6 @@ def test_progress(tracked_sequence: Iterable[int]) -> None:
         sleep()
 
 
-def test_progress_with_cleanup(sequence: range) -> None:
-    items = cli.track_progress(
-        sequence,
-        description="counting",
-        unit="items",
-        cleanup_after_finish=True,
-    )
-    for _ in items:
-        sleep()
-
-
 def test_nested_progress(tracked_sequence: Iterable[int], sequence: range) -> None:
     for i in tracked_sequence:
         sleep()
