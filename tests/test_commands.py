@@ -44,22 +44,8 @@ def test_pipe_output_and_capture(message: str) -> None:
 @linux_only_test
 def test_capture_return_code(return_code: int) -> None:
     assert cli.capture_return_code("exit", return_code, shell=True) == return_code  # noqa: S604
-
-
-@given(return_code=strategies.integers(min_value=0, max_value=255))
-@linux_only_test
-def test_completes_successfully(return_code: int) -> None:
     success = return_code == 0
     assert cli.completes_successfully("exit", return_code, shell=True) == success  # noqa: S604
-
-
-def test_run_commands() -> None:
-    commands = ("ls", "pwd")
-    cli.run_commands(*commands)
-
-
-def test_launch() -> None:
-    cli.launch("ls")
 
 
 def test_launch_commands() -> None:
@@ -92,13 +78,13 @@ def test_command_not_found_exception_handling() -> None:
 
 def test_cwd() -> None:
     with Path.tempdir() as folder:
-        extracted_folder_name = cli.capture_output("pwd", cwd=folder).split("/")[-1]
-    assert extracted_folder_name == folder.name
+        output = cli.capture_output("pwd", cwd=folder)
+    assert Path(output).name == folder.name
 
 
 @given(value=text_strategy())
 @linux_only_test
-def test_extra_subprocess_kwarg(value: str) -> None:
+def test_env(value: str) -> None:
     env = {"name": value}
     assert cli.capture_output("echo", "$name", shell=True, env=env) == value  # noqa: S604
 
@@ -109,6 +95,7 @@ def test_extra_subprocess_kwarg(value: str) -> None:
         (("python", {"version"}), ("python", "--version")),
         (("python", iter(["--version"])), ("python", "--version")),
         (("git", {"work-tree": "."}, "status"), ("git", "--work-tree", ".", "status")),
+        (("git status", 1), ("git", "status", "1")),
     ],
 )
 @patch("subprocess.run")
@@ -121,6 +108,8 @@ def test_parsing(
     assert mocked_run.call_args.args[0] == expected
 
 
-@pytest.mark.parametrize("shell", [False, True])
-def test_root(*, shell: bool) -> None:
-    cli.run("ls", root=True, shell=shell)
+@patch("subprocess.Popen", autospec=True)
+def test_root(mocked_popen: MagicMock) -> None:
+    cli.launch("ls", root=True)
+    if os.name == "posix":
+        assert mocked_popen.call_args.args[0] == ("sudo", "ls")
