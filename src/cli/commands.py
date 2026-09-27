@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import os
 import sys
-from collections.abc import Iterator
-from typing import TYPE_CHECKING
 
+TYPE_CHECKING = False
 if TYPE_CHECKING:
     import subprocess  # pragma: nocover
-    from collections.abc import Iterable, Mapping  # pragma: nocover
+    from collections.abc import Iterable, Iterator, Mapping  # pragma: nocover
     from typing import Any, TypedDict, Unpack  # pragma: nocover
 
     class LaunchOptions(TypedDict, total=False):  # pragma: nocover
@@ -105,6 +104,7 @@ def create_arguments(
 
 def expand_arguments(items: Iterable[object], options: LaunchOptions) -> Iterator[str]:
     import shlex  # noqa: PLC0415
+    from collections.abc import Iterator  # noqa: PLC0415
 
     if options.get("root") and os.name == "posix":
         yield "sudo"
