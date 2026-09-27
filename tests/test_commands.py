@@ -1,10 +1,12 @@
 import os
 import string
-from unittest.mock import patch
+import subprocess
+from unittest.mock import MagicMock, patch
 
 import pytest
 from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
+from superpathlib import Path
 
 import cli
 
@@ -42,22 +44,8 @@ def test_pipe_output_and_capture(message: str) -> None:
 @linux_only_test
 def test_capture_return_code(return_code: int) -> None:
     assert cli.capture_return_code("exit", return_code, shell=True) == return_code  # noqa: S604
-
-
-@given(return_code=strategies.integers(min_value=0, max_value=255))
-@linux_only_test
-def test_completes_successfully(return_code: int) -> None:
     success = return_code == 0
     assert cli.completes_successfully("exit", return_code, shell=True) == success  # noqa: S604
-
-
-def test_run_commands() -> None:
-    commands = ("ls", "pwd")
-    cli.run_commands(*commands)
-
-
-def test_launch() -> None:
-    cli.launch("ls")
 
 
 def test_launch_commands() -> None:
@@ -73,3 +61,55 @@ def test_open() -> None:
     with patch(open_function) as mocked_open:
         cli.open_urls("pwd")
         mocked_open.assert_called_once()
+
+
+@linux_only_test
+def test_exception_handling() -> None:
+    with pytest.raises(subprocess.CalledProcessError) as info:
+        cli.capture_output("echo error >&2; exit 1", shell=True)  # noqa: S604
+    assert info.value.returncode == 1
+    assert info.value.stderr == "error\n"
+
+
+def test_command_not_found_exception_handling() -> None:
+    with pytest.raises(FileNotFoundError):
+        cli.run("non_existing_command")
+
+
+def test_cwd() -> None:
+    with Path.tempdir() as folder:
+        output = cli.capture_output("pwd", cwd=folder)
+    assert Path(output).name == folder.name
+
+
+@given(value=text_strategy())
+@linux_only_test
+def test_env(value: str) -> None:
+    env = {"name": value}
+    assert cli.capture_output("echo", "$name", shell=True, env=env) == value  # noqa: S604
+
+
+@pytest.mark.parametrize(
+    ("items", "expected"),
+    [
+        (("python", {"version"}), ("python", "--version")),
+        (("python", iter(["--version"])), ("python", "--version")),
+        (("git", {"work-tree": "."}, "status"), ("git", "--work-tree", ".", "status")),
+        (("git status", 1), ("git", "status", "1")),
+    ],
+)
+@patch("subprocess.run")
+def test_parsing(
+    mocked_run: MagicMock,
+    items: tuple[object, ...],
+    expected: tuple[str, ...],
+) -> None:
+    cli.run(*items)
+    assert mocked_run.call_args.args[0] == expected
+
+
+@patch("subprocess.Popen", autospec=True)
+def test_root(mocked_popen: MagicMock) -> None:
+    cli.launch("ls", root=True)
+    if os.name == "posix":
+        assert mocked_popen.call_args.args[0] == ("sudo", "ls")
