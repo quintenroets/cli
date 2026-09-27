@@ -7,11 +7,6 @@ with contextlib.suppress(ModuleNotFoundError):  # not available on Windows
     # correctly handle arrow keys when asking user input
 
 
-def ask(question: str) -> str:
-    print(question, end=" ")  # noqa: T201
-    return input().lower().strip()
-
-
 def prompt(*args: Any, **kwargs: Any) -> str:
     from rich.prompt import Prompt  # noqa: PLC0415
 

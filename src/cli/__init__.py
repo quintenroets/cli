@@ -11,5 +11,5 @@ from .commands import (
     run_commands,
     run_commands_in_shell,
 )
-from .input import ask, confirm, prompt
+from .input import confirm, prompt
 from .output import console, track_progress
