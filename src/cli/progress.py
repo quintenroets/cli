@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import atexit
 from functools import cache
-from typing import TYPE_CHECKING, TypeVar
 
+TYPE_CHECKING = False
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
+    from typing import TypeVar
 
     from rich.progress import Progress
 
-
-T = TypeVar("T")
+    T = TypeVar("T")
 
 
 def track_progress(
@@ -48,7 +48,7 @@ def create_progress() -> Progress:
     columns = (
         TextColumn("[progress.description]{task.description}"),
         TextColumn(count_format),
-        BarColumn(bar_width=1000),  # shrinks depending on other columns
+        BarColumn(bar_width=None),
         TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
         TimeRemainingColumn(),
     )
