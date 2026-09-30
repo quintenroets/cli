@@ -14,6 +14,6 @@ from .commands import (
 
 TYPE_CHECKING = False
 if TYPE_CHECKING:
-    from .terminal import confirm, console, prompt, track_progress  # pragma: nocover
+    from .terminal import confirm, console, prompt, track_progress
 else:
     from .terminal import __getattr__

@@ -32,6 +32,7 @@ relative_files = true
 [tool.coverage.report]
 precision = 4
 fail_under = 100
+exclude_also = ["if TYPE_CHECKING:"]
 
 [tool.mypy]
 strict = true

@@ -2,17 +2,17 @@ from __future__ import annotations
 
 TYPE_CHECKING = False
 if TYPE_CHECKING:
-    from typing import Any  # pragma: nocover
+    from typing import Any
 
-    from rich.console import Console  # pragma: nocover
-    from rich.prompt import Confirm, Prompt  # pragma: nocover
+    from rich.console import Console
+    from rich.prompt import Confirm, Prompt
 
-    from . import progress  # pragma: nocover
+    from . import progress
 
-    console: Console  # pragma: nocover
-    prompt = Prompt.ask  # pragma: nocover
-    confirm = Confirm.ask  # pragma: nocover
-    track_progress = progress.track_progress  # pragma: nocover
+    console: Console
+    prompt = Prompt.ask
+    confirm = Confirm.ask
+    track_progress = progress.track_progress
 else:
 
     def __getattr__(name: str) -> Any:

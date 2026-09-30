@@ -5,11 +5,11 @@ import sys
 
 TYPE_CHECKING = False
 if TYPE_CHECKING:
-    import subprocess  # pragma: nocover
-    from collections.abc import Iterable, Iterator, Mapping  # pragma: nocover
-    from typing import Any, TypedDict, Unpack  # pragma: nocover
+    import subprocess
+    from collections.abc import Iterable, Iterator, Mapping
+    from typing import Any, TypedDict, Unpack
 
-    class LaunchOptions(TypedDict, total=False):  # pragma: nocover
+    class LaunchOptions(TypedDict, total=False):
         root: bool
         text: bool
         shell: bool
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
         cwd: str | os.PathLike[str]
         env: Mapping[str, str]
 
-    class RunOptions(LaunchOptions, total=False):  # pragma: nocover
+    class RunOptions(LaunchOptions, total=False):
         check: bool
         input: str | None
         capture_output: bool
