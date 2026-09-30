@@ -5,9 +5,9 @@ from functools import cache
 from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator  # pragma: nocover
+    from collections.abc import Iterable, Iterator
 
-    from rich.progress import Progress  # pragma: nocover
+    from rich.progress import Progress
 
 
 T = TypeVar("T")
