@@ -103,14 +103,13 @@ def create_arguments(
 
 
 def expand_arguments(items: Iterable[object], options: LaunchOptions) -> Iterator[str]:
-    import shlex  # noqa: PLC0415
     from collections.abc import Iterator  # noqa: PLC0415
 
     if options.get("root") and os.name == "posix":
         yield "sudo"
     for i, item in enumerate(items):
         if i == 0 and isinstance(item, str) and not options.get("shell"):
-            yield from shlex.split(item)
+            yield from item.split()
         elif isinstance(item, list | tuple | Iterator):
             yield from map(str, item)
         elif isinstance(item, dict):
