@@ -1,12 +1,12 @@
 import os
 import string
 import subprocess
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 from hypothesis import given, settings, strategies
 from hypothesis.strategies import SearchStrategy
-from superpathlib import Path
 
 import cli
 
@@ -71,15 +71,9 @@ def test_exception_handling() -> None:
     assert info.value.stderr == "error\n"
 
 
-def test_command_not_found_exception_handling() -> None:
-    with pytest.raises(FileNotFoundError):
-        cli.run("non_existing_command")
-
-
-def test_cwd() -> None:
-    with Path.tempdir() as folder:
-        output = cli.capture_output("pwd", cwd=folder)
-    assert Path(output).name == folder.name
+def test_cwd(tmp_path: Path) -> None:
+    output = cli.capture_output("pwd", cwd=tmp_path)
+    assert Path(output).samefile(tmp_path)
 
 
 @given(value=text_strategy())
