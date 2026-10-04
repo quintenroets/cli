@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 def track_progress(
     sequence: Iterable[T],
     description: str = "",
-    unit: str = "item",
+    unit: str = "items",
     total: int | None = None,
 ) -> Iterator[T]:
     progress = create_progress()
@@ -34,24 +34,19 @@ def track_progress(
 
 @cache
 def create_progress() -> Progress:
-    from rich.progress import (  # noqa: PLC0415
-        BarColumn,
-        Progress,
-        TextColumn,
-        TimeRemainingColumn,
-    )
+    from rich import progress  # noqa: PLC0415
 
     count_format = (
         "[progress.completed]{task.completed}/[progress.total]"
         "{task.total:>0.0f} {task.fields[unit]}"
     )
     columns = (
-        TextColumn("[progress.description]{task.description}"),
-        TextColumn(count_format),
-        BarColumn(bar_width=None),
-        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-        TimeRemainingColumn(),
+        progress.TextColumn("[progress.description]{task.description}"),
+        progress.TextColumn(count_format),
+        progress.BarColumn(bar_width=None),
+        progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        progress.TimeRemainingColumn(),
     )
-    progress = Progress(*columns)
-    atexit.register(progress.stop)
-    return progress
+    display = progress.Progress(*columns)
+    atexit.register(display.stop)
+    return display
