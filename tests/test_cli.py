@@ -21,6 +21,14 @@ def test_progress() -> None:
     assert not create_progress().live.is_started
 
 
+def test_progress_without_total() -> None:
+    progress = create_progress()
+    for _ in cli.track_progress(i for i in range(1)):
+        (task,) = progress.tasks
+        assert task.total is None
+    assert task.completed == task.total == 1
+
+
 def test_import_loads_no_dependencies() -> None:
     assert capture_imports("cli") - capture_imports("sys") <= {"__future__", "cli"}
 
