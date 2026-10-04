@@ -21,9 +21,11 @@ def track_progress(
 ) -> Iterator[T]:
     progress = create_progress()
     progress.start()
-    task_id = progress.add_task(description=description, unit=unit)
+    task_id = progress.add_task(description=description, total=total, unit=unit)
     try:
         yield from progress.track(sequence, total=total, task_id=task_id)
+        task = next(task for task in progress.tasks if task.id == task_id)
+        progress.update(task_id, total=task.completed)
     finally:
         progress.stop_task(task_id)
         if all(task.stop_time is not None for task in progress.tasks):
@@ -36,15 +38,12 @@ def track_progress(
 def create_progress() -> Progress:
     from rich import progress  # noqa: PLC0415
 
-    count_format = (
-        "[progress.completed]{task.completed}/[progress.total]"
-        "{task.total:>0.0f} {task.fields[unit]}"
-    )
     columns = (
         progress.TextColumn("[progress.description]{task.description}"),
-        progress.TextColumn(count_format),
+        progress.MofNCompleteColumn(),
+        progress.TextColumn("{task.fields[unit]}"),
         progress.BarColumn(bar_width=None),
-        progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        progress.TaskProgressColumn(),
         progress.TimeRemainingColumn(),
     )
     display = progress.Progress(*columns)
